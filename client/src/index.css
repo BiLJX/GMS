@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: #F5F8FF;
+}
+
+:root {
+  --nav-width: 250px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border: none;
+}
+
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+  color: #8A8A8A;
+}
