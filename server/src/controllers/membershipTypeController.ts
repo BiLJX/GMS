@@ -4,6 +4,7 @@ import { CreateMembershipTypeDataT } from "@shared/Api"
 import { AdminT } from "@shared/Admin";
 import { MembershipType } from "../models/MembershipType";
 import { makeId } from "../utils/idgen";
+
 export const createMembershipType: Controller = async(req, res) => {
     const jsonResponse = new JsonResponse(res);
     try {
@@ -23,6 +24,26 @@ export const createMembershipType: Controller = async(req, res) => {
         })
         await membershipType.save();
         jsonResponse.success(membershipType);
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const getMembershipTypes: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const gym_id = res.locals.admin.gym_id;
+        const search_query = req.query.search_name || "";
+        const membership_types = await MembershipType.aggregate([
+            {
+                $match: {
+                    gym_id,
+                    membership_name: {$regex: search_query, $options: "i"}
+                }
+            }
+        ])
+        jsonResponse.success(membership_types);
     } catch (error) {
         console.log(error);
         jsonResponse.serverError();

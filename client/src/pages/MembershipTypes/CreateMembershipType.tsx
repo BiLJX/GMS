@@ -8,8 +8,11 @@ import { useState } from "react";
 import { CreateMembershipTypeDataT } from "@shared/Api"
 import { createMembershipType } from "api/membershipType";
 import { toastError } from "components/Toast/toast";
+import { useDispatch } from "react-redux";
+import { addMembershipType } from "redux/membershipTypeReducer";
 export default function CreateMembershipType(){
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [creating, setCreating] = useState(false);
     const [data, setData] = useState<CreateMembershipTypeDataT>({
         membership_name: "",
@@ -23,7 +26,8 @@ export default function CreateMembershipType(){
         const res = await createMembershipType(data);
         setCreating(false);
         if(res.error) return toastError(res.message);
-        console.log(res.data);
+        dispatch(addMembershipType(res.data));
+        navigate(-1);
     }
 
 
