@@ -4,5 +4,5 @@ export interface MembershipTypeT {
     membership_name: string,
     period: number,
     description: string,
-    fee: number
+    price: number
 }

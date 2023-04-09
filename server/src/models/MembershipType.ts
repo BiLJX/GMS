@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { MembershipTypeT } from "@shared/MemberTypes"
+import { MembershipTypeT } from "@shared/MembershipTypes"
 const schema = new Schema<MembershipTypeT>({
     membership_type_id: {
         unique: true,
@@ -18,7 +18,7 @@ const schema = new Schema<MembershipTypeT>({
         type: String,
         required: true
     },
-    fee: {
+    price: {
         type: Number,
         required: true
     },
@@ -28,4 +28,4 @@ const schema = new Schema<MembershipTypeT>({
     }
 }, {timestamps: true});
 
-export const MemberType = model("member_type", schema);
+export const MembershipType = model("membership_type", schema);

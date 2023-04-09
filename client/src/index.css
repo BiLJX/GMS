@@ -8,6 +8,8 @@
 
 body {
   background-color: #F5F8FF;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 :root {
