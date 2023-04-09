@@ -10,7 +10,7 @@ export default function Table({
     className = ""
 }: TableProps){
     return(
-        <table style={style} className={"w-full text-sm mt-2 overflow-hidden border-collapse rounded-t-lg "+className}>
+        <table style={style} className={"text-sm w-full mt-2 overflow-hidden border-collapse rounded-t-lg "+className}>
            {children}
         </table>
     )

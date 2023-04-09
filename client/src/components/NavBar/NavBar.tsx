@@ -7,7 +7,7 @@ import InsertChartOutlinedSharpIcon from '@mui/icons-material/InsertChartOutline
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 export default function NavBar(){
     return(
-        <nav className="h-[100vh] w-[var(--nav-size)] fixed top-0 left-0 bg-[#2E313F] flex flex-col">
+        <nav className="h-[100vh] w-[var(--nav-width)] fixed top-0 left-0 bg-[#2E313F] flex flex-col z-20">
             <div className="p-4 text-center">
                 <h1 className="text-3xl font-bold text-white-100">Simple<span className="text-primary-200"> GMS</span></h1>
             </div>
@@ -33,7 +33,7 @@ function NavItem({
     return(
         <NavLink to = {to} className={({isActive})=>`flex px-6 py-3 space-x-4 items-center ${isActive?'text-white-100':'text-white-400'}`}>
             <div className="flex items-center justify-center"><Icon style = {{fontSize: "1.8rem"}} /></div>
-            <div className="text-[18px]">{label}</div>
+            <div className="text-[1rem]">{label}</div>
         </NavLink>
     )
 }

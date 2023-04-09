@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 * {
-  font-family: 'Roboto', sans-serif;
+  /* font-family: 'Roboto', sans-serif; */
+  font-family: 'Poppins', sans-serif;
+  /* font-family: 'M PLUS Rounded 1c', sans-serif; */
 }
 
 body {
