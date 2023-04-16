@@ -7,15 +7,15 @@ import { TwoButton } from "components/Button/buttons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { CreateMembershipTypeDataT } from "@shared/Api"
-import { createMembershipType, getMembershipTypeById } from "api/membershipType";
+import { createMembershipType, editMembershipType, getMembershipTypeById } from "api/membershipType";
 import { toastError } from "components/Toast/toast";
 import { useDispatch } from "react-redux";
 import { addMembershipType } from "redux/membershipTypeReducer";
-export default function CreateMembershipType(){
+export default function EditMembershipType(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const membership_type_id = useParams().id as string;
-    const [creating, setCreating] = useState(false);
+    const [editing, setEditing] = useState(false);
     const [data, setData] = useState<CreateMembershipTypeDataT & {membership_type_id: string}>({
         membership_type_id: "",
         membership_name: "",
@@ -28,12 +28,11 @@ export default function CreateMembershipType(){
         if(res.error) return toastError(res.message);
         setData(res.data);
     }
-    const create = async() => {
-        setCreating(true);
-        const res = await createMembershipType(data);
-        setCreating(false);
+    const edit = async() => {
+        setEditing(true);
+        const res = await editMembershipType(data);
+        setEditing(false);
         if(res.error) return toastError(res.message);
-        dispatch(addMembershipType(res.data));
         navigate(-1);
     }
     useEffect(()=>{
@@ -49,22 +48,22 @@ export default function CreateMembershipType(){
                     <div className="flex flex-col space-y-8">
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Membership Name</InputLabel>
-                            <TextField onChange={(e)=>setData({...data, membership_name: e.target.value})} autoComplete="off" variant="outlined" placeholder="Full Name" size="small" />
+                            <TextField value={data.membership_name} onChange={(e)=>setData({...data, membership_name: e.target.value})} autoComplete="off" variant="outlined" placeholder="Full Name" size="small" />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Period</InputLabel>
-                            <TextField onChange={(e)=>setData({...data, period: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Period (Days)" size="small" />
+                            <TextField value={data.period} onChange={(e)=>setData({...data, period: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Period (Days)" size="small" />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Price</InputLabel>
-                            <TextField onChange={(e)=>setData({...data, price: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Rs Fee" size="small" />
+                            <TextField value={data.price} onChange={(e)=>setData({...data, price: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Rs Fee" size="small" />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Description</InputLabel>
-                            <TextField onChange={(e)=>setData({...data, description: e.target.value})} autoComplete="off" multiline rows={5} variant="outlined" placeholder="Describe membership" size="small" />
+                            <TextField value={data.description} onChange={(e)=>setData({...data, description: e.target.value})} autoComplete="off" multiline rows={5} variant="outlined" placeholder="Describe membership" size="small" />
                         </div>
                         <div>
-                            <TwoButton onClick={create} loadingLabel="Adding..." loading = {creating} onCancel={()=>navigate(-1)} cancelLabel="Cancel">Add</TwoButton>
+                            <TwoButton onClick={edit} loadingLabel="Editing..." loading = {editing} onCancel={()=>navigate(-1)} cancelLabel="Cancel">Edit</TwoButton>
                         </div>
                     </div>
                 </div>

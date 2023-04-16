@@ -19,6 +19,11 @@ export const createMembershipType = async(data: CreateMembershipTypeDataT) => {
     return res.data as ApiResponse<MembershipTypeT>;
 }
 
+export const editMembershipType = async(data: CreateMembershipTypeDataT & {membership_type_id: string}) => {
+    const res = await axios.patch("/api/membership/edit", data);
+    return res.data as ApiResponse<MembershipTypeT>
+}
+
 export const deleteMembershipTypes = async(id: string) => {
     const res = await axios.delete("/api/membership/delete/"+id);
     return res.data as ApiResponse;

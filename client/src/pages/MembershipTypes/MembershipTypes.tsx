@@ -58,7 +58,7 @@ export default function MembershipTypes(){
                                         <Td className="text-gray-500">Rs {x.price}</Td>
                                         <Td className="text-gray-500">{x.membership_type_id}</Td>
                                         <Td className="flex space-x-2">
-                                            <SimpleButton style={{
+                                            <SimpleButton onClick={()=>navigate("edit/"+x.membership_type_id)} style={{
                                                 backgroundColor: "#FFC859",
                                                 
                                                 height: "25px",
