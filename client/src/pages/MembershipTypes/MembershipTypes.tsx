@@ -4,11 +4,11 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import TableSearchBar from "components/SearchBar/TableSearchBar";
 import { SimpleButton } from "components/Button/buttons";
 import { useNavigate } from "react-router-dom";
-import { getMembershipTypeList } from "api/membershipType";
-import { toastError } from "components/Toast/toast";
+import { deleteMembershipTypes, getMembershipTypeList } from "api/membershipType";
+import { toastError, toastSuccess } from "components/Toast/toast";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
-import { addMembershipTypeList } from "redux/membershipTypeReducer";
+import { addMembershipTypeList, removeMembershipType } from "redux/membershipTypeReducer";
 import { useEffect } from "react";
 import Table, { Td, Th, Thead, Tr } from "components/Table/TableComponents";
 
@@ -22,6 +22,12 @@ export default function MembershipTypes(){
         const res = await getMembershipTypeList(search_string);
         if(res.error) return toastError(res.message);
         dispatch(addMembershipTypeList(res.data));
+    }
+    const onDelete = async(id: string) => {
+        const res = await deleteMembershipTypes(id);
+        dispatch(removeMembershipType(id));
+        if(res.error) return toastError(res.message);
+        toastSuccess(res.message)
     }
     useEffect(()=>{
         getMembershipTypes()
@@ -59,7 +65,7 @@ export default function MembershipTypes(){
                                                 fontSize: ".9rem",
                                                 padding: "0 .8rem"
                                             }}>EDIT</SimpleButton>
-                                            <SimpleButton style={{
+                                            <SimpleButton onClick={()=>onDelete(x.membership_type_id)} style={{
                                                 
                                                 height: "25px",
                                                 fontSize: ".9rem",

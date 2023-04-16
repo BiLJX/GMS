@@ -10,9 +10,12 @@ const membershipTypeReducer =createSlice({
         },
         addMembershipType: (state, action: PayloadAction<MembershipTypeT>) => {
             return state = [action.payload, ...state];
+        },
+        removeMembershipType: (state, action: PayloadAction<string>) => {
+            return state = state.filter(x=>x.membership_type_id !== action.payload);
         }
     }
 })
 
-export const { addMembershipType, addMembershipTypeList } = membershipTypeReducer.actions
+export const { addMembershipType, addMembershipTypeList, removeMembershipType } = membershipTypeReducer.actions
 export default membershipTypeReducer.reducer;

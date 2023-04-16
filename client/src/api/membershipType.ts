@@ -9,7 +9,17 @@ export const getMembershipTypeList = async(search_name: string) => {
     return res.data as ApiResponse<MembershipTypeT[]>;
 }
 
+export const getMembershipTypeById = async(id: string) => {
+    const res = await axios.get("/api/membership/"+id);
+    return res.data as ApiResponse<MembershipTypeT>;
+}
+
 export const createMembershipType = async(data: CreateMembershipTypeDataT) => {
     const res = await axios.post("/api/membership/create", data);
     return res.data as ApiResponse<MembershipTypeT>;
+}
+
+export const deleteMembershipTypes = async(id: string) => {
+    const res = await axios.delete("/api/membership/delete/"+id);
+    return res.data as ApiResponse;
 }
