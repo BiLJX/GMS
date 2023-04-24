@@ -18,7 +18,8 @@ export default function CreateMembershipType(){
         membership_name: "",
         period: null,
         description: "",
-        price: null
+        price: null,
+        registration_fee: null
     })
 
     const create = async() => {
@@ -51,9 +52,14 @@ export default function CreateMembershipType(){
                             <TextField onChange={(e)=>setData({...data, price: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Rs Fee" size="small" />
                         </div>
                         <div className="flex flex-col space-y-2">
+                            <InputLabel>Registration Fee</InputLabel>
+                            <TextField onChange={(e)=>setData({...data, registration_fee: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Rs Reg.Fee" size="small" />
+                        </div>
+                        <div className="flex flex-col space-y-2">
                             <InputLabel>Description</InputLabel>
                             <TextField onChange={(e)=>setData({...data, description: e.target.value})} autoComplete="off" multiline rows={5} variant="outlined" placeholder="Describe membership" size="small" />
                         </div>
+                        
                         <div>
                             <TwoButton onClick={create} loadingLabel="Adding..." loading = {creating} onCancel={()=>navigate(-1)} cancelLabel="Cancel">Add</TwoButton>
                         </div>

@@ -38,6 +38,12 @@ const schema = new Schema<MemberT>({
         type: String,
         required: true
     },
+    joined_date: {
+        type: Date,
+    },
+    renew_date: {
+        type: Date,
+    },
     profile_pic_url: {
         type: String,
         required: true

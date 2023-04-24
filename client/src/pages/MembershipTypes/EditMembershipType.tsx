@@ -21,7 +21,8 @@ export default function EditMembershipType(){
         membership_name: "",
         period: null,
         description: "",
-        price: null
+        price: null,
+        registration_fee: null
     })
     const getData = async() => {
         const res = await getMembershipTypeById(membership_type_id);
@@ -57,6 +58,10 @@ export default function EditMembershipType(){
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Price</InputLabel>
                             <TextField value={data.price} onChange={(e)=>setData({...data, price: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Rs Fee" size="small" />
+                        </div>
+                        <div className="flex flex-col space-y-2">
+                            <InputLabel>Registration Fee</InputLabel>
+                            <TextField value={data.registration_fee} onChange={(e)=>setData({...data, registration_fee: parseInt(e.target.value)})} autoComplete="off" type="number" variant="outlined" placeholder="Rs Reg.Fee" size="small" />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Description</InputLabel>

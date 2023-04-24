@@ -12,6 +12,7 @@ export interface MemberT {
     membership_type_id: string,
     gender: Gender,
     joined_date: Date,
+    renew_date: Date,
     expire_date: Date,
     status: MemberShipStatus
 }

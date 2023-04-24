@@ -20,7 +20,8 @@ export const createMembershipType: Controller = async(req, res) => {
             membership_name: data.membership_name,
             description: data.description,
             period: data.period,
-            price: data.price
+            price: data.price,
+            registration_fee: data.registration_fee || 0
         })
         await membershipType.save();
         jsonResponse.success(membershipType);
@@ -82,7 +83,8 @@ export const editMembershipType: Controller = async(req, res) => {
                 membership_name: data.membership_name,
                 description: data.description,
                 period: data.period,
-                price: data.price
+                price: data.price,
+                registration_fee: data.registration_fee || 0
             }
         })
         jsonResponse.success(membershipType);

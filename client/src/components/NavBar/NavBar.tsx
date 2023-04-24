@@ -3,7 +3,7 @@ import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import InsertChartOutlinedSharpIcon from '@mui/icons-material/InsertChartOutlinedSharp';
+import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 export default function NavBar(){
     return(
@@ -15,6 +15,7 @@ export default function NavBar(){
                 <NavItem label="Dashboard" to = "/" Icon={GridViewOutlinedIcon} />
                 <NavItem label="Members" to = "/members" Icon={Groups2OutlinedIcon} />
                 <NavItem label="Membership Types" to = "/membership" Icon={PeopleAltOutlinedIcon} />
+                <NavItem label="Addons" to = "/addons" Icon={NoteAddOutlinedIcon} />
                 <NavItem label="Analytics" to = "/analytics" Icon={InsightsOutlinedIcon} />
             </div>
         </nav>

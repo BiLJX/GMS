@@ -22,6 +22,10 @@ const schema = new Schema<MembershipTypeT>({
         type: Number,
         required: true
     },
+    registration_fee: {
+        type: Number,
+        default: 0
+    },
     period: {
         type: Number,
         required: true
