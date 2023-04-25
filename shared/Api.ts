@@ -5,3 +5,8 @@ export interface CreateMembershipTypeDataT {
     price: number|null,
     registration_fee: number|null
 }
+
+export interface AddAddonsDataT {
+    addon_name: string,
+    price: number|null;
+}
