@@ -12,7 +12,7 @@ export const addAddons: Controller = async(req, res) => {
         if(!client_data.addon_name) return jsonResponse.clientError("Please enter a name");
         const data = new Addon({
             addon_id: makeId(),
-            gym_id: res.locals.gym_id,
+            gym_id: res.locals.admin.gym_id,
             addon_name: client_data.addon_name,
             price: client_data.price
         });
@@ -33,7 +33,7 @@ export const getAddons: Controller = async(req, res) => {
             {
                 $match: {
                     gym_id,
-                    addon_name: {$regex: search_query, $options: "i"}
+                    // addon_name: {$regex: search_query, $options: "i"}
                 }
             }
         ])

@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
 import { addMembershipTypeList, removeMembershipType } from "redux/membershipTypeReducer";
 import { useEffect } from "react";
-import Table, { Td, Th, Thead, Tr } from "components/Table/TableComponents";
+import Table, { TDeleteButton, TEditButton, Td, Th, Thead, Tr } from "components/Table/TableComponents";
 
 const theadData = ["Membership Name", "Period", "Description", "Fee", "ID", "Actions"];
 
@@ -58,19 +58,8 @@ export default function MembershipTypes(){
                                         <Td className="text-gray-500">Rs {x.price}</Td>
                                         <Td className="text-gray-500">{x.membership_type_id}</Td>
                                         <Td className="flex space-x-2">
-                                            <SimpleButton onClick={()=>navigate("edit/"+x.membership_type_id)} style={{
-                                                backgroundColor: "#FFC859",
-                                                
-                                                height: "25px",
-                                                fontSize: ".9rem",
-                                                padding: "0 .8rem"
-                                            }}>EDIT</SimpleButton>
-                                            <SimpleButton onClick={()=>onDelete(x.membership_type_id)} style={{
-                                                
-                                                height: "25px",
-                                                fontSize: ".9rem",
-                                                padding: "0 1rem"
-                                            }}>Delete</SimpleButton>
+                                            <TEditButton onClick={()=>navigate("edit/"+x.membership_type_id)} />
+                                            <TDeleteButton onClick={()=>onDelete(x.membership_type_id)} />
                                         </Td>
                                     </Tr>
                                 ))

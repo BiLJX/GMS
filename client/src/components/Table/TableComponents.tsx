@@ -1,3 +1,4 @@
+import { SimpleButton } from "components/Button/buttons";
 
 interface TableProps {
     children?: any,
@@ -55,9 +56,30 @@ export function Td({
     )
 }
 
-function TEditButton(){
+interface ButtonProps {
+    style?: React.CSSProperties;
+    onClick?: ()=>void;
+}
+export function TEditButton({style, onClick}:ButtonProps){
     return(
-        <button></button>
+        <SimpleButton onClick={onClick} style={{
+            backgroundColor: "#FFC859",
+            height: "25px",
+            fontSize: ".9rem",
+            padding: "0 .8rem",
+            ...style
+        }}>EDIT</SimpleButton>
+    )
+}
+
+export function TDeleteButton({style, onClick}:ButtonProps){
+    return(
+        <SimpleButton onClick={onClick} style={{
+            height: "25px",
+            fontSize: ".9rem",
+            padding: "0 1rem",
+            ...style
+        }}>Delete</SimpleButton>
     )
 }
 
