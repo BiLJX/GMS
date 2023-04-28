@@ -8,9 +8,9 @@ import Table, { TDeleteButton, TEditButton, Td, Th, Thead, Tr } from "components
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
 import { useEffect } from "react"
-import { getAddonList } from "api/addon";
+import { deleteAddon, getAddonList } from "api/addon";
 import { toastError } from "components/Toast/toast";
-import { addAddonList } from "redux/addonReducer";
+import { addAddonList, removeAddon } from "redux/addonReducer";
 const theadData = ["Addon Name", "Price", "ID", "Actions"];
 export default function AddonsPage(){
     const navigate = useNavigate();
@@ -20,6 +20,12 @@ export default function AddonsPage(){
         const res = await getAddonList(name);
         if(res.error) return toastError(res.message);
         dispatch(addAddonList(res.data));
+    }
+    const onDelete = async(id: string) => {
+        if(!window.confirm("Are you sure you want to delete>")) return;
+        const res = await deleteAddon(id);
+        if(res.error) return toastError(res.message);
+        dispatch(removeAddon(id));
     }
     useEffect(()=>{
         getAddons()
@@ -31,7 +37,7 @@ export default function AddonsPage(){
                 <div className="p-4 bg-white-100 rounded-lg flex flex-col space-y-8 min-h-[80vh]">
                     <div className="text-gray-700 font-medium">Addons</div>
                     <div className="flex space-x-3">
-                        <TableSearchBar style = {{flex: "1"}} />
+                        <TableSearchBar style = {{flex: "1"}} onSearch={getAddons} />
                         <SimpleButton onClick={()=>navigate("add")} style={{fontSize: ".9rem", width: "125px", padding: "0", height: "33px"}}>Add</SimpleButton>
                     </div>
                     <Table>
@@ -47,8 +53,8 @@ export default function AddonsPage(){
                                     <Td className="text-gray-500">Rs {x.price}</Td>
                                     <Td className="text-gray-500">{x.addon_id}</Td>
                                     <Td className="flex space-x-2">
-                                        <TEditButton/>
-                                        <TDeleteButton/>
+                                        <TEditButton onClick={()=>navigate("edit/"+x.addon_id)}/>
+                                        <TDeleteButton onClick={()=>onDelete(x.addon_id)}/>
                                     </Td>
                                 </Tr>   
                             ))}

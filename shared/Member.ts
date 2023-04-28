@@ -1,5 +1,5 @@
 export type Gender = "Male"|"Female"|"Others";
-export type MemberShipStatus = "Active"|"Expired";
+export type MembershipStatusType = "Active"|"Expired";
 export interface MemberT {
     member_id: string,
     gym_id: string,
@@ -14,5 +14,5 @@ export interface MemberT {
     joined_date: Date,
     renew_date: Date,
     expire_date: Date,
-    status: MemberShipStatus
+    status: MembershipStatusType
 }

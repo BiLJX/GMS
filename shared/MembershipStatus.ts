@@ -3,7 +3,7 @@ export interface MembershipStatusT {
     gym_id: string,
     member_id: string,
     membership_id: string,
-    addon: string[],
+    addons: string[],
     renew_date: Date,
     expire_date: Date
 }

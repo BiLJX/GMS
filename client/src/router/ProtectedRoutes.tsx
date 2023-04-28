@@ -1,6 +1,7 @@
 import NavBar from "components/NavBar/NavBar";
 import AddAddon from "pages/Addons/AddAddon";
 import AddonsPage from "pages/Addons/AddonsPage";
+import EditAddon from "pages/Addons/EditAddon";
 import Members from "pages/Members/Members";
 import CreateMembershipType from "pages/MembershipTypes/CreateMembershipType";
 import EditMembershipType from "pages/MembershipTypes/EditMembershipType";
@@ -21,7 +22,7 @@ export default function ProtectedRoutes(){
                 <Route path = "addons">
                     <Route index element = {<AddonsPage />} />
                     <Route path = "add" element = {<AddAddon />} />
-                    <Route path = "edit/:id" element = {<></>} />
+                    <Route path = "edit/:id" element = {<EditAddon />} />
                 </Route>
                 <Route path = "members">
                     <Route index element = {<Members />} />

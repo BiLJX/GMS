@@ -24,6 +24,7 @@ export default function MembershipTypes(){
         dispatch(addMembershipTypeList(res.data));
     }
     const onDelete = async(id: string) => {
+        if(!window.confirm("Are you sure you want to delete>")) return;
         const res = await deleteMembershipTypes(id);
         dispatch(removeMembershipType(id));
         if(res.error) return toastError(res.message);
