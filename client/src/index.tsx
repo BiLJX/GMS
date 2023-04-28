@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom/client';
 import App from './router/App';
 import { ToastContainer } from 'react-toastify';
 import { Provider } from 'react-redux';
-import './index.css';
-import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter } from 'react-router-dom';
 import { store } from 'redux/store';
+import Modal from 'react-modal';
+import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -30,4 +32,6 @@ root.render(
     
   </React.StrictMode>
 );
+
+Modal.setAppElement('#root');
 

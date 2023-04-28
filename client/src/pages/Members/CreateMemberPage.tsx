@@ -9,6 +9,8 @@ import { toastError } from "components/Toast/toast";
 import { useDispatch } from "react-redux";
 import { MembershipTypeT } from "@shared/MembershipTypes";
 import { getMembershipTypeList } from "api/membershipType";
+import AddonSelector from "./AddonsSelector";
+import { AddonT } from "@shared/Addon";
 export default function CreateMemberPage(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -32,6 +34,7 @@ export default function CreateMemberPage(){
     }, [])
     return(
         <>
+           
             <Header title="Membership Types" Icon={PersonOutlineIcon}  />
             <Main style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100vw"}}>
                 <div className="p-4 bg-white-100 rounded-lg flex flex-col space-y-8 w-full">
@@ -67,7 +70,9 @@ export default function CreateMemberPage(){
                                     <MenuItem value = "Other">Other</MenuItem>
                                 </Select>
                             </FormInputWrapper>
-                            <Input label="Addons" placeholder="Shower, Locker"/>
+                            <FormInputWrapper label="Addons">
+                                <AddonOpener />
+                            </FormInputWrapper>
                         </Row>
                         <Row>
                             <Input label="Weight" placeholder="Weight (Kg)" type="number" />
@@ -108,5 +113,18 @@ function FormInputWrapper({label, children}: {label: string, children: any}){
             <InputLabel>{label}</InputLabel>
             {children}
         </div>
+    )
+}
+
+interface AddonOpenerProps {
+    addons: AddonT,
+}
+function AddonOpener(){
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    return(
+        <>
+            {isSelectorOpen && <AddonSelector onClose={()=>setIsSelectorOpen(false)} />}
+            <div onClick={()=>setIsSelectorOpen(true)} className="p-2 cursor-pointer text-gray-100 rounded-md border-gray-100 border-[1px]">Add Addons</div>
+        </>
     )
 }

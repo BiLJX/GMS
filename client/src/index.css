@@ -30,3 +30,23 @@ select::placeholder,
 textarea::placeholder {
   color: #8A8A8A;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #4848486e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 888;
+  overflow-y: auto;
+}
+
+modal-overlay > div:active {
+  outline: none;
+}modal-overlay > div:focus {
+  outline: none;
+}
