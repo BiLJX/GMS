@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { store } from 'redux/store';
-import Modal from 'react-modal';
+import Modal from "react-modal"
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 

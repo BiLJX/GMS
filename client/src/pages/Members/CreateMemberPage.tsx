@@ -6,17 +6,21 @@ import { TwoButton } from "components/Button/buttons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useId, useState } from "react";
 import { toastError } from "components/Toast/toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MembershipTypeT } from "@shared/MembershipTypes";
 import { getMembershipTypeList } from "api/membershipType";
 import AddonSelector from "./AddonsSelector";
 import { AddonT } from "@shared/Addon";
+import { RootState } from "redux/store";
+import { CreateMemberDataT } from "@shared/Api";
+import { changeCreateMemberData } from "redux/createMemberReducer";
 export default function CreateMemberPage(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [creating, setCreating] = useState(false);
     const [pfpSrc, setPfpSrc] = useState("");
-    const [membershipTypes, setMembershipTypes] = useState<MembershipTypeT[]>([])
+    const [membershipTypes, setMembershipTypes] = useState<MembershipTypeT[]>([]);
+    const create_member_data = useSelector((state: RootState)=>state.create_member_data)
     const labelId = useId();
     const onImage = (e: any) => {
         const file = e.target.files[0];
@@ -28,6 +32,9 @@ export default function CreateMemberPage(){
         const res = await getMembershipTypeList("");
         if(res.error) return toastError("Error fetching membership types");
         setMembershipTypes(res.data);
+    }
+    const changeData = (data: CreateMemberDataT) => {
+        dispatch(changeCreateMemberData(data));
     }
     useEffect(()=>{
         fetchMembershipTypes()
@@ -47,24 +54,56 @@ export default function CreateMemberPage(){
                             </label>
                         </div>
                         <Row>
-                            <Input label="Full Name" placeholder="Full Name..." />
-                            <Input label="Address" placeholder="Nardevi, Kathmandu" />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, full_name: e.target.value})} 
+                            value={create_member_data.full_name}
+                            label="Full Name" 
+                            placeholder="Full Name..." 
+                            />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, address: e.target.value})}
+                            value={create_member_data.address} 
+                            label="Address" 
+                            placeholder="Nardevi, Kathmandu" />
                         </Row>
                         <Row>
-                            <Input label="Email" placeholder="example@gmail.com" />
-                            <Input label="DOB" placeholder="Date of birth" type = "date" />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, email: e.target.value})}
+                            value={create_member_data.email} 
+                            label="Email" 
+                            placeholder="example@gmail.com" />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, DOB: new Date(e.target.value)})}
+                            value={create_member_data.DOB} 
+                            label="DOB" 
+                            placeholder="Date of birth" 
+                            type = "date" 
+                            />
                         </Row>
                         <Row>
-                            <Input label="Contact No." placeholder="98...." />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, contact_no: parseInt(e.target.value)})}
+                            value={create_member_data.contact_no} 
+                            label="Contact No." 
+                            placeholder="98...." 
+                            />
                             <FormInputWrapper label="Membership Type">
-                                <Select size = "small">
+                                <Select 
+                                onChange={e=>changeData({...create_member_data, membership_type_id: e.target.value})}
+                                value={create_member_data.membership_type_id} 
+                                size = "small"
+                                >
                                     {membershipTypes.map((x, i)=>(<MenuItem value = {x.membership_type_id} key={i}>{x.membership_name}</MenuItem>))}
                                 </Select>
                             </FormInputWrapper>
                         </Row>
                         <Row>
                             <FormInputWrapper label="Gender">
-                                <Select size="small">
+                                <Select 
+                                onChange={e=>changeData({...create_member_data, gender: e.target.value as any})}
+                                value={create_member_data.gender} 
+                                size="small"
+                                >
                                     <MenuItem value="Female">Female</MenuItem>
                                     <MenuItem value = "Male">Male</MenuItem>
                                     <MenuItem value = "Other">Other</MenuItem>
@@ -75,11 +114,29 @@ export default function CreateMemberPage(){
                             </FormInputWrapper>
                         </Row>
                         <Row>
-                            <Input label="Weight" placeholder="Weight (Kg)" type="number" />
-                            <Input label="Discount" placeholder="Percentage" type = "number" />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, weight: parseInt(e.target.value)})}
+                            value={create_member_data.weight} 
+                            label="Weight" 
+                            placeholder="Weight (Kg)" 
+                            type="number" 
+                            />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, discount: parseInt(e.target.value)})}
+                            value={create_member_data.discount} 
+                            label="Discount" 
+                            placeholder="Percentage" 
+                            type = "number" 
+                            />
                         </Row>
                         <Row>
-                            <Input label="Height" placeholder="Height (cm)" type="number" />
+                            <Input 
+                            onChange={e=>changeData({...create_member_data, height: parseInt(e.target.value)})}
+                            value={create_member_data.height} 
+                            label="Height" 
+                            placeholder="Height (cm)" 
+                            type="number" 
+                            />
                         </Row>
                     </div>
                 </div>
@@ -121,10 +178,12 @@ interface AddonOpenerProps {
 }
 function AddonOpener(){
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    const addons = useSelector((state: RootState)=>state.create_member_data.addons)
+    const hasAddons = addons.length;
     return(
         <>
-            {isSelectorOpen && <AddonSelector onClose={()=>setIsSelectorOpen(false)} />}
-            <div onClick={()=>setIsSelectorOpen(true)} className="p-2 cursor-pointer text-gray-100 rounded-md border-gray-100 border-[1px]">Add Addons</div>
+            {<AddonSelector  isOpen = {isSelectorOpen} onClose={()=>setIsSelectorOpen(false)} />}
+            <div onClick={()=>setIsSelectorOpen(true)} className={`p-2 cursor-pointer ${hasAddons?"text-gray-700":"text-gray-100"} rounded-md border-gray-100 border-[1px]`}>{hasAddons?addons.map(x=>x.addon_name).join(", "):"Add Addons"}</div>
         </>
     )
 }

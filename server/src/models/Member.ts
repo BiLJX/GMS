@@ -34,15 +34,20 @@ const schema = new Schema<MemberT>({
         type: String,
         required: true
     },
-    name: {
+    full_name: {
         type: String,
         required: true
     },
     joined_date: {
         type: Date,
     },
-    renew_date: {
-        type: Date,
+    height: {
+        type: Number,
+        required: true
+    },
+    weight: {
+        type: Number,
+        required: true
     },
     profile_pic_url: {
         type: String,

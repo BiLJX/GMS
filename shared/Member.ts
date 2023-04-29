@@ -3,7 +3,7 @@ export type MembershipStatusType = "Active"|"Expired";
 export interface MemberT {
     member_id: string,
     gym_id: string,
-    name: string,
+    full_name: string,
     email: string,
     address: string,
     DOB: Date,
@@ -12,7 +12,7 @@ export interface MemberT {
     membership_type_id: string,
     gender: Gender,
     joined_date: Date,
-    renew_date: Date,
-    expire_date: Date,
+    weight: number,
+    height: number
     status: MembershipStatusType
 }
