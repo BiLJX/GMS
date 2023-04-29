@@ -1,5 +1,5 @@
 import Header from "components/Header/Header";
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import Main from "components/Container/Main";
 import { InputLabel, MenuItem, Select, TextField, TextFieldProps } from "@mui/material";
 import { TwoButton } from "components/Button/buttons";
@@ -14,12 +14,14 @@ import { AddonT } from "@shared/Addon";
 import { RootState } from "redux/store";
 import { CreateMemberDataT } from "@shared/Api";
 import { changeCreateMemberData } from "redux/createMemberReducer";
+import Invoice from "./Invoice";
 export default function CreateMemberPage(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [creating, setCreating] = useState(false);
     const [pfpSrc, setPfpSrc] = useState("");
     const [membershipTypes, setMembershipTypes] = useState<MembershipTypeT[]>([]);
+    const [isInoviceOpen, setIsInoviceOpen] = useState(false)
     const create_member_data = useSelector((state: RootState)=>state.create_member_data)
     const labelId = useId();
     const onImage = (e: any) => {
@@ -37,12 +39,13 @@ export default function CreateMemberPage(){
         dispatch(changeCreateMemberData(data));
     }
     useEffect(()=>{
-        fetchMembershipTypes()
+        fetchMembershipTypes();
+        
     }, [])
     return(
         <>
-           
-            <Header title="Membership Types" Icon={PersonOutlineIcon}  />
+            {<Invoice isOpen = {isInoviceOpen} onClose={()=>setIsInoviceOpen(false)} />}
+            <Header title="Members" Icon={PeopleAltOutlinedIcon}  />
             <Main style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100vw"}}>
                 <div className="p-4 bg-white-100 rounded-lg flex flex-col space-y-8 w-full">
                     <div className="text-gray-700 font-medium w-full">Create Member</div>  
@@ -89,8 +92,8 @@ export default function CreateMemberPage(){
                             />
                             <FormInputWrapper label="Membership Type">
                                 <Select 
-                                onChange={e=>changeData({...create_member_data, membership_type_id: e.target.value})}
-                                value={create_member_data.membership_type_id} 
+                                onChange={e=>changeData({...create_member_data, membership_type: membershipTypes.find(x=>x.membership_type_id === e.target.value)} as any)}
+                                value={create_member_data.membership_type?.membership_type_id} 
                                 size = "small"
                                 >
                                     {membershipTypes.map((x, i)=>(<MenuItem value = {x.membership_type_id} key={i}>{x.membership_name}</MenuItem>))}
@@ -138,6 +141,12 @@ export default function CreateMemberPage(){
                             type="number" 
                             />
                         </Row>
+                        <div>
+                            <button className="text-secondary-blue font-medium" onClick={()=>setIsInoviceOpen(true)}>Click here to VIEW BILL</button>
+                        </div>
+                        <div className="w-[40%]">
+                            <TwoButton cancelLabel="Cancel">Create</TwoButton>
+                        </div>
                     </div>
                 </div>
             </Main>

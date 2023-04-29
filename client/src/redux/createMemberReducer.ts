@@ -8,7 +8,7 @@ const initialState: CreateMemberDataT = {
     DOB: null,
     contact_no: null,
     profile_pic_url: "",
-    membership_type_id: "",
+    membership_type: null,
     gender: null,
     weight: null,
     height: null,
@@ -22,6 +22,9 @@ const createMemberReducer = createSlice({
     reducers: {
         changeCreateMemberData: (state, action: PayloadAction<CreateMemberDataT>) => {
             return state = action.payload;
+        },
+        resetCreateMemberData: (state) =>{
+            return state = initialState;
         }
     }
 })

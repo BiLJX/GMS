@@ -1,5 +1,6 @@
 import { Gender, MembershipStatusType } from "@shared/Member"
 import { AddonT } from "./Addon";
+import { MembershipTypeT } from "./MembershipTypes";
 export interface CreateMembershipTypeDataT {
     membership_name: string,
     period: number|null,
@@ -20,7 +21,7 @@ export interface CreateMemberDataT {
     DOB: Date|null,
     contact_no: number|null,
     profile_pic_url: string,
-    membership_type_id: string,
+    membership_type: MembershipTypeT|null,
     gender: Gender|null,
     weight: number|null,
     height: number|null,
