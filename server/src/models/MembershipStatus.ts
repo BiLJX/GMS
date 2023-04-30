@@ -14,14 +14,6 @@ const schema = new Schema<MembershipStatusT>({
         required: true,
         type: String,
     },
-    membership_id: {
-        required: true,
-        type: String,
-    },
-    addons: {
-        required: true,
-        type: [String]
-    },
     expire_date: {
         required: true,
         type: Date

@@ -14,7 +14,15 @@ const schema = new Schema<SalesT>({
         type: String,
         required: true,
     },
-    amount: {
+    discount_percentage: {
+        type: Number,
+        default: 0
+    },
+    sub_total: {
+        type: Number,
+        required: true,
+    },
+    total: {
         type: Number,
         required: true,
     }
