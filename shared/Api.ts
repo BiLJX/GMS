@@ -1,4 +1,4 @@
-import { Gender, MembershipStatusType } from "@shared/Member"
+import { Gender } from "@shared/Member"
 import { AddonT } from "./Addon";
 import { MembershipTypeT } from "./MembershipTypes";
 export interface CreateMembershipTypeDataT {

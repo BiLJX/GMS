@@ -18,6 +18,10 @@ const schema = new Schema<MemberT>({
         type: String,
         required: true
     },
+    addon_ids: {
+        type: [String],
+        default: []
+    },
     contact_no: {
         type: Number,
         required: true
@@ -51,7 +55,7 @@ const schema = new Schema<MemberT>({
     },
     profile_pic_url: {
         type: String,
-        required: true
+        default: ""
     }
 }, {timestamps: true});
 

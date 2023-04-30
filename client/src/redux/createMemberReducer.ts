@@ -30,4 +30,4 @@ const createMemberReducer = createSlice({
 })
 
 export default createMemberReducer.reducer;
-export const { changeCreateMemberData } = createMemberReducer.actions;
+export const { changeCreateMemberData, resetCreateMemberData } = createMemberReducer.actions;

@@ -13,8 +13,10 @@ import AddonSelector from "./AddonsSelector";
 import { AddonT } from "@shared/Addon";
 import { RootState } from "redux/store";
 import { CreateMemberDataT } from "@shared/Api";
-import { changeCreateMemberData } from "redux/createMemberReducer";
+import { changeCreateMemberData, resetCreateMemberData } from "redux/createMemberReducer";
 import Invoice from "./Invoice";
+import { createMember } from "api/member";
+import { addMember } from "redux/memberReducer";
 export default function CreateMemberPage(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -38,9 +40,17 @@ export default function CreateMemberPage(){
     const changeData = (data: CreateMemberDataT) => {
         dispatch(changeCreateMemberData(data));
     }
+    const onCreate = async() => {
+        setCreating(true);
+        const res = await createMember(create_member_data);
+        setCreating(false);
+        if(res.error) return toastError(res.message);
+        dispatch(addMember(res.data));
+        dispatch(resetCreateMemberData());
+        navigate(-1)
+    }
     useEffect(()=>{
         fetchMembershipTypes();
-        
     }, [])
     return(
         <>
@@ -50,12 +60,12 @@ export default function CreateMemberPage(){
                 <div className="p-4 bg-white-100 rounded-lg flex flex-col space-y-8 w-full">
                     <div className="text-gray-700 font-medium w-full">Create Member</div>  
                     <div className="flex flex-col space-y-8">
-                        <div className="flex justify-center items-center w-full p-4">
+                        {/* <div className="flex justify-center items-center w-full p-4">
                             <input onChange={onImage} id = {labelId} type = "file" accept="image/*" hidden />
                             <label htmlFor={labelId}  className="w-[150px] h-[150px] overflow-hidden rounded-[100%] bg-gray-100">
                                 <img src = {pfpSrc} className="w-full h-full object-cover" />
                             </label>
-                        </div>
+                        </div> */}
                         <Row>
                             <Input 
                             onChange={e=>changeData({...create_member_data, full_name: e.target.value})} 
@@ -76,7 +86,7 @@ export default function CreateMemberPage(){
                             label="Email" 
                             placeholder="example@gmail.com" />
                             <Input 
-                            onChange={e=>changeData({...create_member_data, DOB: new Date(e.target.value)})}
+                            onChange={e=>changeData({...create_member_data, DOB: e.target.value as any})}
                             value={create_member_data.DOB} 
                             label="DOB" 
                             placeholder="Date of birth" 
@@ -145,7 +155,13 @@ export default function CreateMemberPage(){
                             <button className="text-secondary-blue font-medium" onClick={()=>setIsInoviceOpen(true)}>Click here to VIEW BILL</button>
                         </div>
                         <div className="w-[40%]">
-                            <TwoButton cancelLabel="Cancel">Create</TwoButton>
+                            <TwoButton 
+                            cancelLabel="Cancel" 
+                            loadingLabel="Creating..." 
+                            onClick={onCreate}
+                            loading = {creating}
+                            onCancel={()=>navigate(-1)}
+                            >Create</TwoButton>
                         </div>
                     </div>
                 </div>

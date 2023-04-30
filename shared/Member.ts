@@ -1,5 +1,7 @@
+import { MembershipStatusT } from "./MembershipStatus";
+
 export type Gender = "Male"|"Female"|"Others";
-export type MembershipStatusType = "Active"|"Expired";
+
 export interface MemberT {
     member_id: string,
     gym_id: string,
@@ -12,7 +14,8 @@ export interface MemberT {
     membership_type_id: string,
     gender: Gender,
     joined_date: Date,
+    addon_ids: string[],
     weight: number,
     height: number
-    status: MembershipStatusType
+    membership_status: MembershipStatusT
 }

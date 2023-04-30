@@ -45,7 +45,7 @@ export function TwoButton({
     return(
         <div className = "flex flex-row">
             <button onClick={onCancel} className="flex-1 text-gray-400">{cancelLabel}</button>
-            <button onClick={onClick} className={`flex-1 text-white-100 bg-primary-200 py-2 rounded-lg disabled:opacity-50`}>{loading?loadingLabel:children}</button>
+            <button disabled = {loading} onClick={onClick} className={`flex-1 text-white-100 bg-primary-200 py-2 rounded-lg disabled:opacity-50`}>{loading?loadingLabel:children}</button>
         </div>
     )
 }

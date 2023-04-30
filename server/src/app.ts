@@ -1,4 +1,5 @@
 //apps
+import "./fire";
 import express from "express";
 import mongoose from "mongoose";
 import path from "path";
@@ -8,7 +9,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ApiRoutes } from "./routes/apiRoutes";
-
 
 //constants
 const CONNECTION_URL = "mongodb+srv://BiLJX:42a3RePvN1DGXkDh@cluster0.vyegx.mongodb.net/GMS?retryWrites=true&w=majority"
