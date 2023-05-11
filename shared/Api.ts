@@ -28,3 +28,13 @@ export interface CreateMemberDataT {
     addons: AddonT[],
     discount: number
 }
+
+export interface EditMemberDataT {
+    full_name: string,
+    email: string,
+    address: string,
+    DOB: Date|null,
+    contact_no: number|null,
+    gender: Gender|null,
+    height: number|null,
+}

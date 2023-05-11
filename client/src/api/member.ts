@@ -1,6 +1,7 @@
 import { CreateMemberDataT } from "@shared/Api";
 import axios from "./axios";
 import { MemberT } from "@shared/Member";
+import { EditMemberDataT } from "../../../shared/Api";
 
 export const createMember = async(data: CreateMemberDataT, pfp_image?: File) => {
     const _data = {...data};
@@ -14,3 +15,11 @@ export const getMembers = async(search_name: string = "") => {
     const res= await axios.get("/api/members", {params: {search_name}});
     return res.data as ApiResponse<MemberT[]>
 }   
+export const getMemberById = async(member_id: string) => {
+    const res= await axios.get("/api/members/"+member_id);
+    return res.data as ApiResponse<MemberT>;
+}  
+export const editMember = async(member_id: string, data: EditMemberDataT) => {
+    const res = await axios.patch("/api/members/edit/"+member_id, data);
+    return res.data as ApiResponse<MemberT>;
+}

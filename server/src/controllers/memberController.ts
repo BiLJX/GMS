@@ -1,5 +1,5 @@
 import { AdminT } from "@shared/Admin";
-import { CreateMemberDataT } from "@shared/Api";
+import { CreateMemberDataT, EditMemberDataT } from "@shared/Api";
 import { MemberT } from "@shared/Member";
 import { Addon } from "models/Addon";
 import { Member } from "models/Member";
@@ -65,7 +65,7 @@ export const createMember: Controller = async(req, res) => {
                 addon_ids: addons.map(x=>x.addon_id),
                 joined_date: new Date(),
                 membership_type_id: membership_type.membership_type_id,
-                weight: client_data.weight
+                weight: client_data.weight,
             })
             const expire_date: Date = moment().add(30, "days").toDate();
             const membership_status = new MembershipStatus({
@@ -115,6 +115,88 @@ export const getMembers: Controller = async(req, res) => {
             return x;
         })
         jsonResponse.success(members);
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const editMember: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const member_id = req.params.id;
+        const client_data: EditMemberDataT = req.body;
+
+        if(!client_data.full_name) return jsonResponse.clientError("Please enter a name");
+        if(!client_data.address) return jsonResponse.clientError("Please enter a address");
+        if(!client_data.email) return jsonResponse.clientError("Please enter email");
+        if(!(client_data.contact_no && client_data.contact_no.toString().length === 10)) return jsonResponse.clientError("Please enter a valid contact number");
+        if(!(client_data.gender === "Male" || client_data.gender === "Female" || client_data.gender === "Others")) return jsonResponse.clientError("Please enter correct gender");
+        if(!client_data.height) return jsonResponse.clientError("Please enter height");
+        if(!client_data.DOB) return jsonResponse.clientError("Please enter a DOB");
+
+        const result = await Member.findOneAndUpdate({member_id}, {
+            $set: {
+                full_name: client_data.full_name,
+                address: client_data.address,
+                contact_no: client_data.contact_no,
+                DOB: client_data.DOB,
+                email: client_data.email,
+                gender: client_data.gender,
+                height: client_data.height,
+            }
+        })
+
+        if(!result) return jsonResponse.clientError("Something went wrong");
+        jsonResponse.success(result.toJSON());
+        
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const getMemberById: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin;
+        const member_id = req.params.id;
+        const members = await Member.aggregate<MemberT>([
+            {
+                $match: {
+                    gym_id,
+                    member_id
+                }
+            },
+            {
+                $lookup: {
+                    from: "membership_statuses",
+                    localField: "member_id",
+                    foreignField: "member_id",
+                    as: "membership_status",
+                }
+            },
+            {
+                $unwind: "$membership_status"
+            }
+        ])
+        const member = members[0];
+        if(!member) return jsonResponse.notFound("Member not found");
+        member.membership_status.status = moment(new Date()).isAfter(member.membership_status.expire_date)?"Expired":"Active";
+        jsonResponse.success(member);   
+
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const deleteMember: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const member_id = req.params.id;
+        await Member.findOneAndDelete({member_id});
+        jsonResponse.success("Member removed successfully");
     } catch (error) {
         console.log(error);
         jsonResponse.serverError();
