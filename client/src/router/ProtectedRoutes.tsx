@@ -3,6 +3,7 @@ import AddAddon from "pages/Addons/AddAddon";
 import AddonsPage from "pages/Addons/AddonsPage";
 import EditAddon from "pages/Addons/EditAddon";
 import CreateMemberPage from "pages/Members/CreateMemberPage";
+import EditMemberPage from "pages/Members/EditMemberPage";
 import Members from "pages/Members/Members";
 import CreateMembershipType from "pages/MembershipTypes/CreateMembershipType";
 import EditMembershipType from "pages/MembershipTypes/EditMembershipType";
@@ -28,6 +29,7 @@ export default function ProtectedRoutes(){
                 <Route path = "members">
                     <Route index element = {<Members />} />
                     <Route path = "create" element = {<CreateMemberPage />} />
+                    <Route path = "edit/:id" element = {<EditMemberPage />} />
                 </Route>
             </Routes>
         </>

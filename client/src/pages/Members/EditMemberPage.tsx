@@ -7,21 +7,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useId, useState } from "react";
 import { toastError } from "components/Toast/toast";
 import { useDispatch, useSelector } from "react-redux";
-import { MembershipTypeT } from "@shared/MembershipTypes";
-import { getMembershipTypeList } from "api/membershipType";
-import AddonSelector from "./AddonsSelector";
-import { AddonT } from "@shared/Addon";
-import { RootState } from "redux/store";
 import { CreateMemberDataT, EditMemberDataT } from "@shared/Api";
 import { changeCreateMemberData, resetCreateMemberData } from "redux/createMemberReducer";
 import Invoice from "./Invoice";
 import { createMember, editMember, getMemberById } from "api/member";
 import { addMember } from "redux/memberReducer";
-export default function CreateMemberPage(){
+import moment from "moment";
+export default function EditMemberPage(){
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const id = useParams().id || "";
-    const [creating, setCreating] = useState(false);
+    const [editing, setEditing] = useState(false);
     const [pfpSrc, setPfpSrc] = useState("");
     const [isInoviceOpen, setIsInoviceOpen] = useState(false)
     const [editData, setEditData] = useState<EditMemberDataT>();
@@ -46,18 +41,15 @@ export default function CreateMemberPage(){
         setPfpSrc(imageUrl)
     }
     const onCreate = async() => {
-        setCreating(true);
+        setEditing(true);
         const res = await editMember(id, editData);
-        setCreating(false);
+        setEditing(false);
         if(res.error) return toastError(res.message);
-        dispatch(addMember(res.data));
-        dispatch(resetCreateMemberData());
         navigate(-1)
     }
     
     return(
         <>
-            {<Invoice isOpen = {isInoviceOpen} onClose={()=>setIsInoviceOpen(false)} />}
             <Header title="Members" Icon={PeopleAltOutlinedIcon}  />
             <Main style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100vw"}}>
                 <div className="p-4 bg-white-100 rounded-lg flex flex-col space-y-8 w-full">
@@ -82,9 +74,10 @@ export default function CreateMemberPage(){
                             value={editData.email} 
                             label="Email" 
                             placeholder="example@gmail.com" />
+
                             <Input 
                             onChange={e=>setEditData({...editData, DOB: e.target.value as any})}
-                            value={editData.DOB} 
+                            value={moment(editData.DOB).format('YYYY-MM-DD')} 
                             label="DOB" 
                             placeholder="Date of birth" 
                             type = "date" 
@@ -121,17 +114,14 @@ export default function CreateMemberPage(){
                             type="number" 
                             />
                         </Row>
-                        <div>
-                            <button className="text-secondary-blue font-medium" onClick={()=>setIsInoviceOpen(true)}>Click here to VIEW BILL</button>
-                        </div>
                         <div className="w-[40%]">
                             <TwoButton 
                             cancelLabel="Cancel" 
-                            loadingLabel="Creating..." 
+                            loadingLabel="Edit..." 
                             onClick={onCreate}
-                            loading = {creating}
+                            loading = {editing}
                             onCancel={()=>navigate(-1)}
-                            >Create</TwoButton>
+                            >Edit</TwoButton>
                         </div>
                     </div>
                 </div>
