@@ -38,9 +38,10 @@ export const createMember: Controller = async(req, res) => {
             if(addons.length !== addon_ids.length) return jsonResponse.clientError("One of the addon you added is invalid")
     
             const membership_price = membership_type.price;
+            const registration_fee = membership_type.registration_fee;
             const addons_price = addons.reduce((prev, x)=>prev + x.price, 0)
             const discount_percentage = client_data.discount;
-            const sub_total = membership_price + addons_price;
+            const sub_total = membership_price + addons_price + registration_fee;
             const total = sub_total - ((discount_percentage/100) * sub_total);
             
             const sale = new Sales({

@@ -6,7 +6,8 @@ interface ButtonProps {
     style?: React.CSSProperties;
     color?: string;
     loading?: boolean;
-    loadingLabel?: string
+    loadingLabel?: string;
+    disabled?: boolean
 }
 export function SimpleButton({
     children,
@@ -14,12 +15,13 @@ export function SimpleButton({
     style,
     color,
     loading,
+    disabled,
     loadingLabel
 }:ButtonProps){
     return(
         <button 
         style={style} 
-        disabled = {loading} 
+        disabled = {disabled || loading} 
         className={`bg-primary-200 text-white-100 py-[.4em] rounded-lg text-lg disabled:opacity-50 `}
         onClick={onClick}
         >

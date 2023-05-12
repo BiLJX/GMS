@@ -2,7 +2,7 @@ import { CreateMembershipTypeDataT } from "@shared/Api";
 import axios from "./axios";
 import { MembershipTypeT } from "@shared/MembershipTypes";
 
-export const getMembershipTypeList = async(search_name: string) => {
+export const getMembershipTypeList = async(search_name: string = "") => {
     const res = await axios.get("/api/membership", {
         params: {search_name}
     })

@@ -59,6 +59,8 @@ export function Td({
 interface ButtonProps {
     style?: React.CSSProperties;
     onClick?: ()=>void;
+    label?: string;
+    disabled?: boolean
 }
 export function TEditButton({style, onClick}:ButtonProps){
     return(
@@ -69,6 +71,17 @@ export function TEditButton({style, onClick}:ButtonProps){
             padding: "0 .8rem",
             ...style
         }}>EDIT</SimpleButton>
+    )
+}
+
+export function Tbutton({style, onClick, label = "Click", disabled}:ButtonProps){
+    return(
+        <SimpleButton onClick={onClick} disabled = {disabled} style={{
+            height: "25px",
+            fontSize: ".9rem",
+            padding: "0 .8rem",
+            ...style
+        }}>{label}</SimpleButton>
     )
 }
 

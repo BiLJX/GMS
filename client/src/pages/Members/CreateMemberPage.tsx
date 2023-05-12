@@ -17,6 +17,7 @@ import { changeCreateMemberData, resetCreateMemberData } from "redux/createMembe
 import Invoice from "./Invoice";
 import { createMember } from "api/member";
 import { addMember } from "redux/memberReducer";
+import { FormInputWrapper, InputWithLabel as Input } from "components/Input/Inputs";
 export default function CreateMemberPage(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -51,10 +52,13 @@ export default function CreateMemberPage(){
     }
     useEffect(()=>{
         fetchMembershipTypes();
+        return(()=>{
+            dispatch(resetCreateMemberData());
+        })
     }, [])
     return(
         <>
-            {<Invoice isOpen = {isInoviceOpen} onClose={()=>setIsInoviceOpen(false)} />}
+            {<Invoice isOpen = {isInoviceOpen} onClose={()=>setIsInoviceOpen(false)} includeRegistration />}
             <Header title="Members" Icon={PeopleAltOutlinedIcon}  />
             <Main style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100vw"}}>
                 <div className="p-4 bg-white-100 rounded-lg flex flex-col space-y-8 w-full">
@@ -97,6 +101,7 @@ export default function CreateMemberPage(){
                             <Input 
                             onChange={e=>changeData({...create_member_data, contact_no: parseInt(e.target.value)})}
                             value={create_member_data.contact_no} 
+                            type="number"
                             label="Contact No." 
                             placeholder="98...." 
                             />
@@ -178,30 +183,11 @@ function Row({children}: {children: any}){
     )
 }
 
-function Input(props: TextFieldProps & {label: string}){
-    const _props = {...props};
-    delete (_props as any).label;
-    return(
-        <div className="flex flex-col space-y-2 w-[40%]">
-            <InputLabel>{props.label}</InputLabel>
-            <TextField autoComplete="off" variant="outlined" {..._props} size="small" />
-        </div>
-    )
-}
-
-function FormInputWrapper({label, children}: {label: string, children: any}){
-    return(
-        <div className="flex flex-col space-y-2 w-[40%]">
-            <InputLabel>{label}</InputLabel>
-            {children}
-        </div>
-    )
-}
 
 interface AddonOpenerProps {
     addons: AddonT,
 }
-function AddonOpener(){
+export function AddonOpener(){
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
     const addons = useSelector((state: RootState)=>state.create_member_data.addons)
     const hasAddons = addons.length;

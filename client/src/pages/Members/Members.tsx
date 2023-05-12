@@ -9,7 +9,7 @@ import { toastError } from "components/Toast/toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addMemberList } from "redux/memberReducer";
 import { useEffect } from "react";
-import Table, { TDeleteButton, TEditButton, Td, Th, Thead, Tr } from "components/Table/TableComponents";
+import Table, { TDeleteButton, TEditButton, Tbutton, Td, Th, Thead, Tr } from "components/Table/TableComponents";
 import { RootState } from "redux/store";
 import moment from "moment";
 
@@ -53,6 +53,7 @@ export default function Members(){
                                         <Td className="text-gray-500">{moment(x.membership_status.expire_date).format("MMM Do, yyyy")}</Td>
                                         <Td className="text-gray-500">{x.membership_status.status}</Td>
                                         <Td className="flex space-x-2">
+                                            <Tbutton onClick={()=>navigate("renew/"+x.member_id)} disabled = {x.membership_status.status !== "Active"} label="Renew" style={{backgroundColor: "#00FF38"}} />
                                             <TEditButton onClick={()=>navigate("edit/"+x.member_id)} />
                                             <TDeleteButton />
                                         </Td>
