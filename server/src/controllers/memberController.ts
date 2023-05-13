@@ -68,7 +68,7 @@ export const createMember: Controller = async(req, res) => {
                 membership_type_id: membership_type.membership_type_id,
                 weight: client_data.weight,
             })
-            const expire_date: Date = moment().add(30, "days").toDate();
+            const expire_date: Date = moment().add(membership_type.period, "days").toDate();
             const membership_status = new MembershipStatus({
                 member_id,
                 gym_id,
@@ -127,7 +127,7 @@ export const editMember: Controller = async(req, res) => {
     try {
         const member_id = req.params.id;
         const client_data: EditMemberDataT = req.body;
-
+        const gym_id = res.locals.admin.gym_id;
         if(!client_data.full_name) return jsonResponse.clientError("Please enter a name");
         if(!client_data.address) return jsonResponse.clientError("Please enter a address");
         if(!client_data.email) return jsonResponse.clientError("Please enter email");
@@ -136,7 +136,7 @@ export const editMember: Controller = async(req, res) => {
         if(!client_data.height) return jsonResponse.clientError("Please enter height");
         if(!client_data.DOB) return jsonResponse.clientError("Please enter a DOB");
 
-        const result = await Member.findOneAndUpdate({member_id}, {
+        const result = await Member.findOneAndUpdate({member_id, gym_id}, {
             $set: {
                 full_name: client_data.full_name,
                 address: client_data.address,
@@ -194,10 +194,95 @@ export const getMemberById: Controller = async(req, res) => {
 
 export const deleteMember: Controller = async(req, res) => {
     const jsonResponse = new JsonResponse(res);
+    const gym_id = res.locals.admin.gym_id;
     try {
         const member_id = req.params.id;
-        await Member.findOneAndDelete({member_id});
+        await Member.findOneAndDelete({member_id, gym_id});
         jsonResponse.success("Member removed successfully");
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const renewMemberShip: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin;
+        const member_id = req.params.id;
+        const client_data: CreateMemberDataT = req.body;
+        if(!client_data.membership_type?.membership_type_id) return jsonResponse.clientError("Please select a membership type");
+        
+        const member = (await Member.aggregate<MemberT>([
+            {
+                $match: {
+                    member_id,
+                    gym_id
+                }
+            },
+            {
+                $lookup: {
+                    from: "membership_statuses",
+                    localField: "member_id",
+                    foreignField: "member_id",
+                    as: "membership_status",
+                }
+            },
+            {
+                $unwind: "$membership_status"
+            }
+        ]))[0]
+
+        if(!member) return jsonResponse.clientError("Member not found");
+        const prev_expire_date = member.membership_status.expire_date;
+        const expire_status = moment(new Date()).isAfter(prev_expire_date)?"Expired":"Active";
+
+        if(expire_status === "Active") return jsonResponse.clientError("The membership has not been expired");
+
+
+        const membership_type = await MembershipType.findOne({gym_id, membership_type_id: client_data.membership_type.membership_type_id});
+        if(!membership_type) return jsonResponse.clientError("Invalid Membership Type");
+        
+        const addon_ids = client_data.addons?.map(x=>x.addon_id) || [];
+        const addons = await Addon.find({gym_id, addon_id: {$in: addon_ids }});
+        if(addons.length !== addon_ids.length) return jsonResponse.clientError("One of the addon you added is invalid")
+        
+        const expire_date: Date = moment().add(membership_type.period, "days").toDate();
+    
+        const membership_price = membership_type.price;
+        const addons_price = addons.reduce((prev, x)=>prev + x.price, 0)
+        const discount_percentage = client_data.discount;
+        const sub_total = membership_price + addons_price;
+        const total = sub_total - ((discount_percentage/100) * sub_total);
+
+
+
+        const sale = new Sales({
+            gym_id,
+            sale_id: makeId(),
+            membership_type_id: client_data.membership_type,
+            discount_percentage,
+            sub_total,
+            total
+        })
+        await sale.validate();
+        
+        await Member.findOneAndUpdate({member_id, gym_id}, {
+            $set: {
+                membership_type_id: membership_type.membership_type_id,
+                addon_ids: addons.map(x=>x.toJSON().addon_id)
+            }
+        })
+
+        await MembershipStatus.findOneAndUpdate({member_id, gym_id}, {
+            $set: {
+                expire_date,
+                renew_date: new Date(),
+            }
+        })
+        
+        await sale.save();
+        jsonResponse.success();
     } catch (error) {
         console.log(error);
         jsonResponse.serverError();

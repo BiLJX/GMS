@@ -53,7 +53,7 @@ export default function Members(){
                                         <Td className="text-gray-500">{moment(x.membership_status.expire_date).format("MMM Do, yyyy")}</Td>
                                         <Td className="text-gray-500">{x.membership_status.status}</Td>
                                         <Td className="flex space-x-2">
-                                            <Tbutton onClick={()=>navigate("renew/"+x.member_id)} disabled = {x.membership_status.status !== "Active"} label="Renew" style={{backgroundColor: "#00FF38"}} />
+                                            <Tbutton onClick={()=>navigate("renew/"+x.member_id)} disabled = {x.membership_status.status === "Active"} label="Renew" style={{backgroundColor: "#00FF38"}} />
                                             <TEditButton onClick={()=>navigate("edit/"+x.member_id)} />
                                             <TDeleteButton />
                                         </Td>

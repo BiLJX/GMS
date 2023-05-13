@@ -8,7 +8,7 @@ import { MembershipTypeT } from "@shared/MembershipTypes";
 import { getMembershipTypeList } from "api/membershipType";
 import { toastError } from "components/Toast/toast";
 import { useNavigate, useParams } from "react-router-dom";
-import { getMemberById } from "api/member";
+import { getMemberById, renewMemberShip } from "api/member";
 import { MemberT } from "@shared/Member";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
@@ -40,7 +40,11 @@ export default function RenewPage(){
     }
 
     const onRenew = async() => {
-
+        setRenewing(true);
+        const res = await renewMemberShip(id, create_member_data);
+        setRenewing(false);
+        if(res.error) return toastError(res.message);
+        navigate(-1);
     }
 
     useLayoutEffect(()=>{
@@ -72,7 +76,7 @@ export default function RenewPage(){
                         <AddonOpener />
                     </FormInputWrapper>
                     <FormInputWrapper label = "Discount">
-                        <TextField size = "small" placeholder="Discount Percentage" type = "number" />
+                        <TextField onChange = {e=>dispatch(changeCreateMemberData({...create_member_data, discount: parseInt(e.target.value || "0")}))} size = "small" placeholder="Discount Percentage" type = "number" />
                     </FormInputWrapper>
                     <div>
                         <button className="text-secondary-blue font-medium" onClick={()=>setIsInoviceOpen(true)}>Click here to VIEW BILL</button>
