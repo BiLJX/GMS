@@ -4,6 +4,7 @@ import membershipTypeReducer from "./membershipTypeReducer";
 import addonReducer from "./addonReducer";
 import createMemberReducer from "./createMemberReducer";
 import memberReducer from "./memberReducer";
+import dashboardReducer from "./dashboardReducer";
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         membership_types: membershipTypeReducer,
         addons: addonReducer,
         create_member_data: createMemberReducer,
-        members: memberReducer
+        members: memberReducer,
+        dashboard: dashboardReducer
     }
 })
 

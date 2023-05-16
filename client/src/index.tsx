@@ -6,8 +6,11 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { store } from 'redux/store';
 import Modal from "react-modal"
+import { Chart as ChartJS, registerables  } from "chart.js";
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
+
+ChartJS.register(...registerables);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

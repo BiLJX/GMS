@@ -30,7 +30,8 @@ module.exports = {
       },
       "brc": {
           100: "#DCDCDC",
-          200: "#8A8A8A"
+          200: "#8A8A8A",
+          300: "#EFEFEF"
       }
     }
   },
