@@ -3,7 +3,7 @@ import { Response } from "express";
 export default class JsonResponse {
     constructor(private res: Response){}
     
-    public success(data: any = {}, message: string = "sucess"){
+    public success(data: any = {}, message: string = "success"){
         this.res.status(200).json({
             error: false,
             status: 200,
