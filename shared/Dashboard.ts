@@ -10,8 +10,9 @@ export interface DashboardStatsT {
     total_members_today: TotalStats,
     total_sales_today: TotalStats,
     total_monthly_sales: TotalStats,
-    daily_sales: Array<{day: string, value: number}>,
-    daily_members: Array<{day: string, value: number}>,
+
+    daily_sales: Array<{date: string, value: number}>,
+    daily_members: Array<{date: string, value: number}>,
     membership_category: Array<{membership_name: string, total_members: string}>,
     expired_memebrs: MemberT[]
 }
