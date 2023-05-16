@@ -41,7 +41,7 @@ export default function CreateMembershipType(){
                     <div className="flex flex-col space-y-8">
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Membership Name</InputLabel>
-                            <TextField onChange={(e)=>setData({...data, membership_name: e.target.value})} autoComplete="off" variant="outlined" placeholder="Full Name" size="small" />
+                            <TextField onChange={(e)=>setData({...data, membership_name: e.target.value})} autoComplete="off" variant="outlined" placeholder="Name" size="small" />
                         </div>
                         <div className="flex flex-col space-y-2">
                             <InputLabel>Period</InputLabel>

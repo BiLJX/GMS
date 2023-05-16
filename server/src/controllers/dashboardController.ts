@@ -3,7 +3,7 @@ import { Sales } from "models/Sales";
 import { Controller } from "types/controller";
 import JsonResponse from "utils/Response";
 import { getCurrentMonth, getLastDays, getLastMonth, getToday } from "utils/query";
-import { DashboardStatsT, TotalStats } from "@shared/Dashboard";
+import { DashboardStatsT, TotalStatsT } from "@shared/Dashboard";
 import { enumerateDays } from "utils/date"
 import moment from "moment";
 import { MembershipType } from "models/MembershipType";
@@ -239,15 +239,22 @@ export const getDashboardStats: Controller = async(req, res) => {
                 $unwind: "$membership_status"
             },
             {
+                $addFields: {
+                    today
+                }
+            },
+            {
                 $match: {
-                    "membership_status.expire_date": {$gt: today}
+                    $expr: {
+                        $gt: [today, "$membership_status.expire_date"]
+                    }
                 }
             }
         ])
         
 
-        const member_increase = parseFloat(((total_members_monthly_count - total_members_prev_month) / total_members_prev_month).toFixed(2))
-        const sales_increase = parseFloat(((total_monthly_sales_count - total_sales_prev_month) / total_sales_prev_month).toFixed(2))
+        const member_increase = parseFloat((((total_members_monthly_count - total_members_prev_month) / total_members_prev_month)*100).toFixed(2))
+        const sales_increase = parseFloat((((total_monthly_sales_count - total_sales_prev_month) / total_sales_prev_month)*100).toFixed(2))
         const dashboardStats: DashboardStatsT = {
             total_members: {
                 value: total_members_count,

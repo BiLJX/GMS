@@ -17,7 +17,7 @@ export default function ExpiredMembersTable(){
             </thead>
             <tbody>
                 {data?.expired_memebrs.map((x, i)=>(
-                    <tr>
+                    <tr className="border-b-[1px] border-brc-300">
                         <td className="p-4 text-left">{i + 1}</td>
                         <td className="p-4 text-left">{x.full_name}</td>
                         <td className="p-4 text-left">{moment(x.membership_status.expire_date).format("Do MMM, YYYY")}</td>
