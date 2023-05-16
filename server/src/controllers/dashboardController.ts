@@ -6,6 +6,7 @@ import { getCurrentMonth, getLastDays, getLastMonth, getToday } from "utils/quer
 import { DashboardStatsT, TotalStats } from "@shared/Dashboard";
 import { enumerateDays } from "utils/date"
 import moment from "moment";
+import { MembershipType } from "models/MembershipType";
 export const getDashboardStats: Controller = async(req, res) => {
     const jsonResponse = new JsonResponse(res);
     try {
@@ -194,11 +195,60 @@ export const getDashboardStats: Controller = async(req, res) => {
                 value: x.count
             }
         })
+
+        const membershipCategory_data = await Member.aggregate([
+            {
+                $match: {
+                    gym_id
+                }
+            },
+            {
+                $lookup: {
+                    as: "membership_data",
+                    from: "membership_types",
+                    localField: "membership_type_id",
+                    foreignField: "membership_type_id"
+                }
+            },
+            {
+                $unwind: "$membership_data"
+            },
+            {
+                $group: {
+                    _id: "$membership_data.membership_name",
+                    count: {$count: {}}
+                }
+            }
+        ])
+        const today = new Date()
+        const expiredMembers = await Member.aggregate([
+            {
+                $match: {
+                    gym_id
+                }
+            },
+            {
+                $lookup: {
+                    from: "membership_statuses",
+                    localField: "member_id",
+                    foreignField: "member_id",
+                    as: "membership_status",
+                }
+            },
+            {
+                $unwind: "$membership_status"
+            },
+            {
+                $match: {
+                    "membership_status.expire_date": {$gt: today}
+                }
+            }
+        ])
         
 
         const member_increase = parseFloat(((total_members_monthly_count - total_members_prev_month) / total_members_prev_month).toFixed(2))
         const sales_increase = parseFloat(((total_monthly_sales_count - total_sales_prev_month) / total_sales_prev_month).toFixed(2))
-        const dashboardStats = {
+        const dashboardStats: DashboardStatsT = {
             total_members: {
                 value: total_members_count,
                 increase: member_increase
@@ -215,8 +265,13 @@ export const getDashboardStats: Controller = async(req, res) => {
                 value: total_sales_today_count,
                 increase: sales_increase
             },
+            membership_category: membershipCategory_data.map(x=>({
+                membership_name: x._id,
+                total_members: x.count
+            })),
             daily_sales,
-            daily_members
+            daily_members,
+            expired_memebrs: expiredMembers
         }
         jsonResponse.success(dashboardStats)
     } catch (error) {
