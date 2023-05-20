@@ -10,6 +10,7 @@ import RenewPage from "pages/Members/RenewPage";
 import CreateMembershipType from "pages/MembershipTypes/CreateMembershipType";
 import EditMembershipType from "pages/MembershipTypes/EditMembershipType";
 import MembershipTypes from "pages/MembershipTypes/MembershipTypes";
+import SalesPage from "pages/Reports/SalesPage";
 import { Route, Routes } from "react-router-dom";
 
 export default function ProtectedRoutes(){
@@ -33,6 +34,10 @@ export default function ProtectedRoutes(){
                     <Route path = "create" element = {<CreateMemberPage />} />
                     <Route path = "edit/:id" element = {<EditMemberPage />} />
                     <Route path = "renew/:id" element = {<RenewPage />} />
+                </Route>
+
+                <Route path = "reports">
+                    <Route path = "sales" element = {<SalesPage />} /> 
                 </Route>
                 
             </Routes>

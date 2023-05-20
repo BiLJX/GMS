@@ -5,6 +5,9 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
+import PointOfSaleOutlinedIcon from '@mui/icons-material/PointOfSaleOutlined';
+import PieChartOutlinedIcon from '@mui/icons-material/PieChartOutlined';
+
 export default function NavBar(){
     return(
         <nav className="h-[100vh] w-[var(--nav-width)] fixed top-0 left-0 bg-[#2E313F] flex flex-col z-20">
@@ -13,10 +16,18 @@ export default function NavBar(){
             </div>
             <div className="flex flex-col mt-4">
                 <NavItem label="Dashboard" to = "/" Icon={GridViewOutlinedIcon} />
+
+                <div className="text-gray-200 px-6 pt-4 text-sm">Management</div>
+
                 <NavItem label="Members" to = "/members" Icon={Groups2OutlinedIcon} />
                 <NavItem label="Membership Types" to = "/membership" Icon={PeopleAltOutlinedIcon} />
                 <NavItem label="Addons" to = "/addons" Icon={NoteAddOutlinedIcon} />
-                <NavItem label="Analytics" to = "/analytics" Icon={InsightsOutlinedIcon} />
+
+                <div className="text-gray-200 px-6 pt-4 text-sm">Reports</div>
+
+                <NavItem label="Sales" to = "/reports/sales" Icon={PointOfSaleOutlinedIcon} />
+                <NavItem label="Members" to = "/reports/members" Icon={InsightsOutlinedIcon} />
+                <NavItem label="Breakdown" to = "/reports/breakdown" Icon={PieChartOutlinedIcon} />
             </div>
         </nav>
     )
@@ -33,8 +44,9 @@ function NavItem({
 }: NavProps){
     return(
         <NavLink to = {to} className={({isActive})=>`flex px-6 py-3 space-x-4 items-center ${isActive?'text-white-100':'text-white-400'}`}>
-            <div className="flex items-center justify-center"><Icon style = {{fontSize: "1.8rem"}} /></div>
-            <div className="text-[1rem]">{label}</div>
+            <div className="flex items-center justify-center"><Icon style = {{fontSize: "1.4rem"}} /></div>
+            <div className="text-sm">{label}</div>
         </NavLink>
     )
 }
+
