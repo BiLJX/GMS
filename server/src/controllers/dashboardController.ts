@@ -211,13 +211,24 @@ export const getDashboardStats: Controller = async(req, res) => {
                 }
             },
             {
-                $unwind: "$membership_data"
+                $unwind: {
+                    path: "$membership_data",
+                    preserveNullAndEmptyArrays: true 
+                }
             },
             {
                 $group: {
                     _id: "$membership_data.membership_name",
                     count: {$count: {}}
                 }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
+            },
+            {
+                $limit: 4
             }
         ])
         const today = new Date()

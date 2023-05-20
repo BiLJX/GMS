@@ -239,3 +239,53 @@ export const getMembersReport: Controller = async(req, res) => {
         jsonResponse.serverError();
     }
 }
+
+export const getBreakdownReport: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin
+        const memberships = await Member.aggregate([
+            {
+                $match: {
+                    gym_id
+                }
+            },
+            {
+                $lookup: {
+                    as: "membership_data",
+                    from: "membership_types",
+                    localField: "membership_type_id",
+                    foreignField: "membership_type_id"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$membership_data",
+                    preserveNullAndEmptyArrays: true 
+                }
+            },
+            {
+                $group: {
+                    _id: "$membership_data.membership_name",
+                    count: {$count: {}}
+                }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
+            },
+            {
+                $limit: 8
+            }
+        ])
+        const data: ReportStatsT[] = memberships.map(x=>({
+            label: x._id,
+            value: x.count
+        }))
+        jsonResponse.success(data);
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
