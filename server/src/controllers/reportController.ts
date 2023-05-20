@@ -4,6 +4,7 @@ import { Controller } from "types/controller";
 import JsonResponse from "utils/Response";
 import { getLastDays } from "utils/query";
 import { ReportByDateT, ReportStatsT } from "@shared/Report"
+import { Member } from "models/Member";
 
 interface AggregatedData {
     _id: {
@@ -89,7 +90,7 @@ export const getSales: Controller = async(req, res) => {
                 }
             ])
             report = formatDataByYear(sales);
-        } if(dateRange === "monthly") {
+        }else if(dateRange === "monthly") {
             sales = await Sales.aggregate<AggregatedData>([
                 {
                     $match: {
@@ -138,6 +139,99 @@ export const getSales: Controller = async(req, res) => {
                 }
             ])
             report = formatData(sales);
+        }
+        jsonResponse.success(report);
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const getMembersReport: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin;
+        const dateRange: ReportByDateT =  req.query.date_type as ReportByDateT;
+        const dateQuery = () => {
+            if(dateRange === "daily") return getLastDays(30);
+            if(dateRange === "monthly") return {
+                $gte: moment().startOf("year").toDate()
+            }
+        }
+        let members: AggregatedData[]|AggregatedDataByYear[];
+        let report: ReportStatsT[] = [];
+        //yearly
+        if(dateRange === "yearly") {
+            members = await Member.aggregate<AggregatedDataByYear>([
+                {
+                    $match: {
+                        gym_id,
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            year: {$year: "$createdAt"}
+                        },
+                        count: {$count: {}}
+                    }
+                },
+                {
+                    $sort: {
+                        "_id.year": 1,
+                    }
+                }
+            ])
+            report = formatDataByYear(members);
+        }else if(dateRange === "monthly") {
+            members = await Member.aggregate<AggregatedData>([
+                {
+                    $match: {
+                        gym_id,
+                        createdAt: dateQuery(),
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            month: {$month: "$createdAt"},
+                        },
+                        count: {$count: {}}
+                    }
+                },
+                {
+                    $sort: {
+                        "_id.month": 1,
+                    }
+                }
+            ])
+            report = formatDataByMonth(members);
+        }
+        else {
+            members = await Member.aggregate<AggregatedData>([
+                {
+                    $match: {
+                        gym_id,
+                        createdAt: dateQuery(),
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            month: {$month: "$createdAt"},
+                            day:{$dayOfMonth: "$createdAt"},
+                        },
+                        count: {$count: {}}
+                    }
+                },
+                {
+                    $sort: {
+                        "_id.month": 1,
+                        "_id.day": 1,
+                    }
+                }
+            ])
+            report = formatData(members);
         }
         jsonResponse.success(report);
     } catch (error) {

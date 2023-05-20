@@ -10,6 +10,7 @@ import RenewPage from "pages/Members/RenewPage";
 import CreateMembershipType from "pages/MembershipTypes/CreateMembershipType";
 import EditMembershipType from "pages/MembershipTypes/EditMembershipType";
 import MembershipTypes from "pages/MembershipTypes/MembershipTypes";
+import MembersReportPage from "pages/Reports/MembersPage";
 import SalesPage from "pages/Reports/SalesPage";
 import { Route, Routes } from "react-router-dom";
 
@@ -38,6 +39,7 @@ export default function ProtectedRoutes(){
 
                 <Route path = "reports">
                     <Route path = "sales" element = {<SalesPage />} /> 
+                    <Route path = "members" element = {<MembersReportPage />} /> 
                 </Route>
                 
             </Routes>
