@@ -1,7 +1,7 @@
 import Header from "components/Header/Header";
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import Main from "components/Container/Main";
-import { TextField, Select, MenuItem, InputLabel } from "@mui/material";
+import { TextField, Select, MenuItem, InputLabel, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { InputWithLabel } from "components/Input/Inputs";
 import { useState, useEffect, useLayoutEffect } from "react"
 import { MembershipTypeT } from "@shared/MembershipTypes";
@@ -16,6 +16,7 @@ import { changeCreateMemberData, resetCreateMemberData } from "redux/createMembe
 import { AddonOpener } from "./CreateMemberPage";
 import Invoice from "./Invoice";
 import { TwoButton } from "components/Button/buttons";
+import { CreateMemberDataT } from "@shared/Api";
 export default function RenewPage(){
 
     const dispatch  = useDispatch(); 
@@ -26,7 +27,7 @@ export default function RenewPage(){
     const [member, setMember] = useState<MemberT>();
     const [isInoviceOpen, setIsInoviceOpen] = useState(false);
     const [renewing, setRenewing] = useState(false);
-    const create_member_data = useSelector((state: RootState)=>state.create_member_data);
+    const create_member_data = useSelector((state: RootState)=>state.create_member_data) as CreateMemberDataT & {renew_from: "today"|"expire"};
     
     const fetchMembershipTypes = async() => {
         const res = await getMembershipTypeList();
@@ -76,7 +77,13 @@ export default function RenewPage(){
                         <AddonOpener />
                     </FormInputWrapper>
                     <FormInputWrapper label = "Discount">
-                        <TextField onChange = {e=>dispatch(changeCreateMemberData({...create_member_data, discount: parseInt(e.target.value || "0")}))} size = "small" placeholder="Discount Percentage" type = "number" />
+                        <TextField value = {create_member_data.discount} onChange = {e=>dispatch(changeCreateMemberData({...create_member_data, discount: parseInt(e.target.value || "0")}))} size = "small" placeholder="Discount Percentage" type = "number" />
+                    </FormInputWrapper>
+                    <FormInputWrapper label="Renew From">
+                        <ToggleButtonGroup exclusive value={create_member_data.renew_from || "today"} onChange={(e, val)=>dispatch(changeCreateMemberData({...create_member_data, renew_from: val} as any))}>
+                            <ToggleButton value = "today">Today</ToggleButton>
+                            <ToggleButton value = "expire">Expire Date</ToggleButton>
+                        </ToggleButtonGroup>
                     </FormInputWrapper>
                     <div>
                         <button className="text-secondary-blue font-medium" onClick={()=>setIsInoviceOpen(true)}>Click here to VIEW BILL</button>

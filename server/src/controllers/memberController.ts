@@ -210,7 +210,8 @@ export const renewMemberShip: Controller = async(req, res) => {
     try {
         const { gym_id } = res.locals.admin;
         const member_id = req.params.id;
-        const client_data: CreateMemberDataT = req.body;
+
+        const client_data: CreateMemberDataT & {renew_from: "today"|"expire"} = req.body;
         if(!client_data.membership_type?.membership_type_id) return jsonResponse.clientError("Please select a membership type");
         
         const member = (await Member.aggregate<MemberT>([
@@ -234,6 +235,8 @@ export const renewMemberShip: Controller = async(req, res) => {
         ]))[0]
 
         if(!member) return jsonResponse.clientError("Member not found");
+
+
         const prev_expire_date = member.membership_status.expire_date;
         const expire_status = moment(new Date()).isAfter(prev_expire_date)?"Expired":"Active";
 
@@ -247,8 +250,14 @@ export const renewMemberShip: Controller = async(req, res) => {
         const addons = await Addon.find({gym_id, addon_id: {$in: addon_ids }});
         if(addons.length !== addon_ids.length) return jsonResponse.clientError("One of the addon you added is invalid")
         
-        const expire_date: Date = moment().add(membership_type.period, "days").toDate();
-    
+        let expire_date: Date =  moment().add(membership_type.period, "days").toDate();; 
+        let renew_date: Date = new Date();
+        if(client_data.renew_from === "expire") {
+            expire_date = moment(member.membership_status.expire_date).add(membership_type.period, "days").toDate();
+            renew_date = member.membership_status.expire_date
+        }
+        
+
         const membership_price = membership_type.price;
         const addons_price = addons.reduce((prev, x)=>prev + x.price, 0)
         const discount_percentage = client_data.discount;
@@ -277,7 +286,7 @@ export const renewMemberShip: Controller = async(req, res) => {
         await MembershipStatus.findOneAndUpdate({member_id, gym_id}, {
             $set: {
                 expire_date,
-                renew_date: new Date(),
+                renew_date
             }
         })
         
