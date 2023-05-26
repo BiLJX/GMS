@@ -20,7 +20,7 @@ export interface MemberT {
     weight: number,
     height: number
     membership_status: MembershipStatusT,
-    memebrship: MembershipTypeT,
+    membership: MembershipTypeT,
     addons: AddonT[]
     age: number,
 }

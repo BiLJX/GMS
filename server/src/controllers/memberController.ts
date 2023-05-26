@@ -180,16 +180,16 @@ export const getMemberById: Controller = async(req, res) => {
             {
                 $lookup: {
                     from: "membership_types",
-                    localField: "member_id",
-                    foreignField: "member_id",
+                    localField: "membership_type_id",
+                    foreignField: "membership_type_id",
                     as: "membership"
                 }
             },
             {
                 $lookup: {
                     from: "addons",
-                    localField: "member_id",
-                    foreignField: "member_id",
+                    localField: "addon_ids",
+                    foreignField: "addon_id",
                     as: "addons"
                 }
             },
