@@ -3,7 +3,7 @@ import Header from "components/Header/Header";
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import TableSearchBar from "components/SearchBar/TableSearchBar";
 import { SimpleButton } from "components/Button/buttons";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { getMembers } from "api/member";
 import { toastError } from "components/Toast/toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,7 +47,7 @@ export default function Members(){
                                 members.map((x, i)=>(
                                     <Tr index={i+1}>
                                         <Td className="text-secondary-blue font-bold text-lg text-center">{i+1}</Td>
-                                        <Td className="text-secondary-blue font-bold">{x.full_name}</Td>
+                                        <Td className="text-secondary-blue font-bold"><NavLink to = {x.member_id}> {x.full_name} </NavLink></Td>
                                         <Td className="text-gray-500">{moment(x.joined_date).format("MMM Do, yyyy")}</Td>
                                         <Td className="text-gray-500">{moment(x.membership_status.renew_date).format("MMM Do, yyyy")}</Td>
                                         <Td className="text-gray-500">{moment(x.membership_status.expire_date).format("MMM Do, yyyy")}</Td>

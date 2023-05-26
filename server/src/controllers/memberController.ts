@@ -1,5 +1,5 @@
 import { AdminT } from "@shared/Admin";
-import { CreateMemberDataT, EditMemberDataT } from "@shared/Api";
+import { CreateMemberDataT, EditMemberDataT, MemberResponseT } from "@shared/Api";
 import { MemberT } from "@shared/Member";
 import { Addon } from "models/Addon";
 import { Member } from "models/Member";
@@ -162,7 +162,7 @@ export const getMemberById: Controller = async(req, res) => {
     try {
         const { gym_id } = res.locals.admin;
         const member_id = req.params.id;
-        const members = await Member.aggregate<MemberT>([
+        const members = await Member.aggregate<MemberResponseT>([
             {
                 $match: {
                     gym_id,
@@ -178,12 +178,42 @@ export const getMemberById: Controller = async(req, res) => {
                 }
             },
             {
+                $lookup: {
+                    from: "membership_types",
+                    localField: "member_id",
+                    foreignField: "member_id",
+                    as: "membership"
+                }
+            },
+            {
+                $lookup: {
+                    from: "addons",
+                    localField: "member_id",
+                    foreignField: "member_id",
+                    as: "addons"
+                }
+            },
+            {
                 $unwind: "$membership_status"
+            },
+            {
+                $unwind: {
+                    path: "$membership",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: { 
+                    age: { $dateDiff: { startDate: "$DOB", endDate: "$$NOW", unit: "year" } } 
+                }
             }
         ])
         const member = members[0];
         if(!member) return jsonResponse.notFound("Member not found");
+        member.total_days = moment(member.membership_status.expire_date).diff(member.membership_status.renew_date, "days");
+        member.remaining_days = moment(member.membership_status.expire_date).diff(new Date(), "days")
         member.membership_status.status = moment(new Date()).isAfter(member.membership_status.expire_date)?"Expired":"Active";
+        if(member.membership_status.status === "Expired") member.remaining_days = 0;
         jsonResponse.success(member);   
 
     } catch (error) {

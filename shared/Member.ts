@@ -1,4 +1,6 @@
+import { AddonT } from "./Addon";
 import { MembershipStatusT } from "./MembershipStatus";
+import { MembershipTypeT } from "./MembershipTypes";
 
 export type Gender = "Male"|"Female"|"Others";
 
@@ -17,5 +19,8 @@ export interface MemberT {
     addon_ids: string[],
     weight: number,
     height: number
-    membership_status: MembershipStatusT
+    membership_status: MembershipStatusT,
+    memebrship: MembershipTypeT,
+    addons: AddonT[]
+    age: number,
 }

@@ -1,4 +1,4 @@
-import { CreateMemberDataT } from "@shared/Api";
+import { CreateMemberDataT, MemberResponseT } from "@shared/Api";
 import axios from "./axios";
 import { MemberT } from "@shared/Member";
 import { EditMemberDataT } from "../../../shared/Api";
@@ -18,7 +18,7 @@ export const getMembers = async(search_name: string = "") => {
  
 export const getMemberById = async(member_id: string) => {
     const res= await axios.get("/api/members/"+member_id);
-    return res.data as ApiResponse<MemberT>;
+    return res.data as ApiResponse<MemberResponseT>;
 }  
 
 export const renewMemberShip = async(member_id: string, data: CreateMemberDataT) => {

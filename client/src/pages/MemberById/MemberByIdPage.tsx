@@ -1,0 +1,78 @@
+import { MemberT } from "@shared/Member";
+import { getMemberById } from "api/member";
+import Main from "components/Container/Main";
+import Header from "components/Header/Header";
+import { toastError } from "components/Toast/toast";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import PersonIcon from '@mui/icons-material/Person';
+import { MemberResponseT } from "@shared/Api";
+import { Box } from "components/Container/Box";
+import moment from "moment";
+import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
+import 'react-circular-progressbar/dist/styles.css';
+export default function MemberByIdPage(){
+    const id = useParams().id || "";
+    const [member, setMember] = useState<MemberResponseT>();
+    const fetchMember = async() => {
+        const res = await getMemberById(id);
+        if(res.error) return toastError(res.message);
+        setMember(res.data);
+    }
+    useEffect(()=>{
+        fetchMember();
+    }, [id])
+    if(!member) return (
+        <>
+            <Header title="Member" Icon={PersonIcon} />
+        </>
+    )
+    return(
+        <>
+            <Header title="Member" Icon={PersonIcon} />
+            <Main className="space-y-2">
+                <Box className="flex flex-col space-y-4">
+                    <div className="flex flex-col">
+                        <div className="text-lg text-gray-700 font-medium">{member.full_name}</div>
+                        <div className="text-gray-200">{member.age} years old {member.gender}</div>
+                    </div>
+                   <div className="flex">
+                        <Info title="Contact No." subTitle={member.contact_no + ""} />
+                        <Info title="Email" subTitle={member.email} />
+                        <Info title="Address" subTitle={member.address} />
+                        <Info title="DOB" subTitle={moment(member.DOB).format("DD/MM/yyyy") } />
+                   </div>
+                   <div className="flex">
+                        <Info title="Membership" subTitle={"Gym 1 Month"} />
+                        <Info title="Addons" subTitle={"Addons"} />
+                        <Info title="Height" subTitle={member.height + " cm"} />
+                        <Info title="Joined Date" subTitle={moment(member.joined_date).format("DD/MM/yyyy") } />
+                   </div>
+                </Box>
+                <div className="flex space-x-2">
+                    <Box className="flex flex-col space-y-2">
+                        <div className="text-gray-700 font-medium">Remaining Days</div>
+                        <div className="p-4">
+                            <CircularProgressbarWithChildren styles={buildStyles({pathColor: "#FFC859"})} className="w-[150px] h-[150px]"  value={(member.remaining_days/member.total_days)*100}>
+                                <div className="text-4xl text-gray-500 font-medium">{member.remaining_days}</div>
+                                <div className="text-gray-500">Days</div>
+                            </CircularProgressbarWithChildren>
+                        </div>
+                    </Box>
+                    <Box className="flex flex-col flex-1">
+                        <div className="text-gray-700 font-medium">Weight</div>
+                    </Box>
+                </div>
+            </Main>
+        </>
+    )
+}
+
+function Info({title, subTitle}: {title: string, subTitle: string}){
+    return(
+        <div className="flex flex-col flex-1 text-sm space-y-2">
+            <div className="text-gray-300">{title}</div>
+            <div className="text-gray-500">{subTitle}</div>
+        </div>
+    )
+}

@@ -1,4 +1,4 @@
-import { Gender } from "@shared/Member"
+import { Gender, MemberT } from "./Member"
 import { AddonT } from "./Addon";
 import { MembershipTypeT } from "./MembershipTypes";
 export interface CreateMembershipTypeDataT {
@@ -37,4 +37,9 @@ export interface EditMemberDataT {
     contact_no: number|null,
     gender: Gender|null,
     height: number|null,
+}
+
+export interface MemberResponseT extends MemberT {
+    remaining_days: number,
+    total_days: number,
 }
