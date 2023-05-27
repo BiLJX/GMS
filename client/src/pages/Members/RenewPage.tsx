@@ -77,7 +77,7 @@ export default function RenewPage(){
                         <AddonOpener />
                     </FormInputWrapper>
                     <FormInputWrapper label = "Discount">
-                        <TextField value = {create_member_data.discount} onChange = {e=>dispatch(changeCreateMemberData({...create_member_data, discount: parseInt(e.target.value || "0")}))} size = "small" placeholder="Discount Percentage" type = "number" />
+                        <TextField value = {create_member_data.discount} onChange = {e=>dispatch(changeCreateMemberData({...create_member_data, discount: parseInt(e.target.value)}))} size = "small" placeholder="Discount Percentage" type = "number" />
                     </FormInputWrapper>
                     <FormInputWrapper label="Renew From">
                         <ToggleButtonGroup exclusive value={create_member_data.renew_from || "today"} onChange={(e, val)=>dispatch(changeCreateMemberData({...create_member_data, renew_from: val} as any))}>

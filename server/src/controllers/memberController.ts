@@ -204,14 +204,14 @@ export const getMemberById: Controller = async(req, res) => {
             },
             {
                 $addFields: { 
-                    age: { $dateDiff: { startDate: "$DOB", endDate: "$$NOW", unit: "year" } } 
+                    age: { $dateDiff: { startDate: "$DOB", endDate: "$$NOW", unit: "year" } },
+                    total_days: {$dateDiff: {startDate: "$membership_status.renew_date", endDate: "$membership_status.expire_date", unit: "day"}}, 
+                    remaining_days: {$dateDiff: {startDate: "$$NOW", endDate: "$membership_status.expire_date", unit: "day"}}
                 }
             }
         ])
         const member = members[0];
         if(!member) return jsonResponse.notFound("Member not found");
-        member.total_days = moment(member.membership_status.expire_date).diff(member.membership_status.renew_date, "days");
-        member.remaining_days = moment(member.membership_status.expire_date).diff(new Date(), "days")
         member.membership_status.status = moment(new Date()).isAfter(member.membership_status.expire_date)?"Expired":"Active";
         if(member.membership_status.status === "Expired") member.remaining_days = 0;
         jsonResponse.success(member);   
@@ -228,6 +228,7 @@ export const deleteMember: Controller = async(req, res) => {
     try {
         const member_id = req.params.id;
         await Member.findOneAndDelete({member_id, gym_id});
+        await MembershipStatus.findOneAndDelete({member_id, gym_id});
         jsonResponse.success("Member removed successfully");
     } catch (error) {
         console.log(error);
@@ -290,7 +291,7 @@ export const renewMemberShip: Controller = async(req, res) => {
 
         const membership_price = membership_type.price;
         const addons_price = addons.reduce((prev, x)=>prev + x.price, 0)
-        const discount_percentage = client_data.discount;
+        const discount_percentage = client_data.discount || 0;
         const sub_total = membership_price + addons_price;
         const total = sub_total - ((discount_percentage/100) * sub_total);
 
@@ -322,6 +323,23 @@ export const renewMemberShip: Controller = async(req, res) => {
         
         await sale.save();
         jsonResponse.success();
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+export const cancelMembership: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin;
+        const member_id = req.params.id;
+        await MembershipStatus.findOneAndUpdate({gym_id,member_id}, {
+            $set: {
+                expire_date: new Date()
+            }
+        })
+        jsonResponse.success("Successfully canceled membership")
     } catch (error) {
         console.log(error);
         jsonResponse.serverError();

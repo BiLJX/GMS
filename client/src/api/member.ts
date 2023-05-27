@@ -30,3 +30,8 @@ export const editMember = async(member_id: string, data: EditMemberDataT) => {
     const res = await axios.patch("/api/members/edit/"+member_id, data);
     return res.data as ApiResponse<MemberT>;
 }
+
+export const cancelMembership = async(member_id: string) => {
+    const res = await axios.put("/api/members/cancel/"+member_id);
+    return res.data as ApiResponse<MemberT>;
+}

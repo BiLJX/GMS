@@ -1,8 +1,8 @@
 import { MemberT } from "@shared/Member";
-import { getMemberById } from "api/member";
+import { cancelMembership, getMemberById } from "api/member";
 import Main from "components/Container/Main";
 import Header from "components/Header/Header";
-import { toastError } from "components/Toast/toast";
+import { toastError, toastSuccess } from "components/Toast/toast";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
@@ -15,11 +15,22 @@ import { SimpleButton } from "components/Button/buttons";
 export default function MemberByIdPage(){
     const id = useParams().id || "";
     const [member, setMember] = useState<MemberResponseT>();
+    const [canCancel, setCanCancel] = useState<boolean>();
     const navigate = useNavigate();
     const fetchMember = async() => {
         const res = await getMemberById(id);
         if(res.error) return toastError(res.message);
         setMember(res.data);
+        setCanCancel(res.data.membership_status.status === "Active");
+    }
+    const onCancel = async() => {
+        if(!member) return;
+        if(!window.confirm("Are you sure you want to cancel?")) return;
+        const res = await cancelMembership(id);
+        if(res.error) return  toastError(res.message);
+        setCanCancel(false);
+        setMember({...member, remaining_days: 0});
+        toastSuccess(res.message)
     }
     useEffect(()=>{
         fetchMember();
@@ -55,7 +66,7 @@ export default function MemberByIdPage(){
                     <Box className="flex flex-col space-y-2">
                         <div className="text-gray-700 font-medium text-lg">Remaining Days</div>
                         <div className="p-4">
-                            <CircularProgressbarWithChildren styles={buildStyles({pathColor: "#FFC859"})} className="w-[150px] h-[150px]"  value={(member.remaining_days/member.total_days)*100}>
+                            <CircularProgressbarWithChildren styles={buildStyles({pathColor: "#FFC859"})} className="w-[150px] h-[150px]"  value={(member.remaining_days/(member.total_days || 1))*100}>
                                 <div className="text-4xl text-gray-500 font-medium">{member.remaining_days}</div>
                                 <div className="text-gray-500">Days</div>
                             </CircularProgressbarWithChildren>
@@ -78,11 +89,11 @@ export default function MemberByIdPage(){
                         subTitle="Change member's information like name, age, email etc." 
                         button={<button onClick={()=>navigate("/members/edit/"+member.member_id)} className="bg-secondary-blue text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">EDIT</button>}
                         />
-                        <Action 
+                       {canCancel && <Action 
                         title="Cancel Membership" 
                         subTitle="Cancel member's membership subscription." 
-                        button={<button className="bg-gray-100 text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">Cancel</button>}
-                        />
+                        button={<button onClick={onCancel} className="bg-gray-100 text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">Cancel</button>}
+                        />}
                         <Action 
                         title="Delete Member" 
                         subTitle="Delete member permanently." 
@@ -97,7 +108,7 @@ export default function MemberByIdPage(){
 
 function Info({title, subTitle}: {title: string, subTitle: string}){
     return(
-        <div className="flex flex-col flex-1 space-y-2">
+        <div className="flex flex-col flex-1 space-y-2 text-sm">
             <div className="text-gray-300">{title}</div>
             <div className="text-gray-500">{subTitle}</div>
         </div>
