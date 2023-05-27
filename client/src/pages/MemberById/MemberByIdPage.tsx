@@ -89,6 +89,11 @@ export default function MemberByIdPage(){
                         subTitle="Change member's information like name, age, email etc." 
                         button={<button onClick={()=>navigate("/members/edit/"+member.member_id)} className="bg-secondary-blue text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">EDIT</button>}
                         />
+                        <Action 
+                        title="Update Weight" 
+                        subTitle="Weekly update member's weight" 
+                        button={<button onClick={()=>navigate("/members/edit/"+member.member_id)} className="bg-secondary-blue text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">UPDATE</button>}
+                        />
                        {canCancel && <Action 
                         title="Cancel Membership" 
                         subTitle="Cancel member's membership subscription." 
