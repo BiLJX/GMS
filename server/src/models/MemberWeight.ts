@@ -5,7 +5,8 @@ import { makeId } from "utils/idgen";
 const schema = new Schema<MemberWeightT>({
     member_weight_id: {
         default: () => makeId(),
-        unique: true
+        unique: true,
+        type: String
     },
     gym_id: {
         required: true,

@@ -12,8 +12,10 @@ import moment from "moment";
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import { SimpleButton } from "components/Button/buttons";
+import UpdateWeightModal from "./UpdateWeightModal";
 export default function MemberByIdPage(){
     const id = useParams().id || "";
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [member, setMember] = useState<MemberResponseT>();
     const [canCancel, setCanCancel] = useState<boolean>();
     const navigate = useNavigate();
@@ -42,6 +44,7 @@ export default function MemberByIdPage(){
     )
     return(
         <>
+            {isModalOpen && <UpdateWeightModal onClose={()=>setIsModalOpen(false)} />}
             <Header title="Member" Icon={PersonIcon} />
             <Main className="space-y-2">
                 <Box className="flex flex-col space-y-4">
@@ -79,20 +82,20 @@ export default function MemberByIdPage(){
                 <Box className="flex flex-col">
                     <div className="text-gray-700 font-medium text-lg mb-4">Actions</div>
                     <div className="flex flex-col space-y-4">
-                        <Action 
+                       {member.membership_status.status === "Expired" && <Action 
                         title="Renew Membership" 
                         subTitle="If the membership of the member has been  expired you can renew the membership." 
                         button={<button onClick={()=>navigate("/members/renew/"+member.member_id)} className="bg-[#4EFF22] text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">RENEW</button>}
-                        />
+                        />}
                         <Action 
                         title="Edit Membership" 
                         subTitle="Change member's information like name, age, email etc." 
-                        button={<button onClick={()=>navigate("/members/edit/"+member.member_id)} className="bg-secondary-blue text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">EDIT</button>}
+                        button={<button onClick={()=>navigate("/members/edit/"+member.member_id)} className="bg-secondary-orange text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">EDIT</button>}
                         />
                         <Action 
                         title="Update Weight" 
                         subTitle="Weekly update member's weight" 
-                        button={<button onClick={()=>navigate("/members/edit/"+member.member_id)} className="bg-secondary-blue text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">UPDATE</button>}
+                        button={<button onClick={()=>setIsModalOpen(true)} className="bg-secondary-blue text-white-100 py-2 w-[80px] text-sm rounded-xl font-medium">UPDATE</button>}
                         />
                        {canCancel && <Action 
                         title="Cancel Membership" 
