@@ -1,8 +1,35 @@
+import { MemberWeightT, WeightStatsT } from "@shared/Weight";
 import { Member } from "models/Member";
 import { MemberWeight } from "models/MemberWeight";
 import moment from "moment";
 import { Controller } from "types/controller";
 import JsonResponse from "utils/Response";
+import { getLastDays } from "utils/query";
+
+export const getMemberWeight: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin;
+        const { id } = req.params;
+        const weights = await MemberWeight.aggregate<MemberWeightT>([
+            {
+                $match: {
+                    gym_id,
+                    member_id: id,
+                    createdAt: getLastDays(180)
+                }
+            },
+        ])
+        const data: WeightStatsT[] = weights.map(x=>({
+            date: moment(x.createdAt).format("Do MMM"),
+            value: x.weight
+        }))
+        jsonResponse.success(data);
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
 
 export const updateMemberWeight: Controller = async(req, res) => {
     const jsonResponse = new JsonResponse(res);

@@ -13,17 +13,27 @@ import { CircularProgressbarWithChildren, buildStyles } from "react-circular-pro
 import 'react-circular-progressbar/dist/styles.css';
 import { SimpleButton } from "components/Button/buttons";
 import UpdateWeightModal from "./UpdateWeightModal";
+import { WeightStatsT } from "@shared/Weight";
+import { getMemberWeight } from "api/weight";
+import WeightGraph from "./WeightGraph";
 export default function MemberByIdPage(){
     const id = useParams().id || "";
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [member, setMember] = useState<MemberResponseT>();
     const [canCancel, setCanCancel] = useState<boolean>();
+    const [userWeights, setUserWeights] = useState<WeightStatsT[]>([])
     const navigate = useNavigate();
     const fetchMember = async() => {
         const res = await getMemberById(id);
         if(res.error) return toastError(res.message);
         setMember(res.data);
         setCanCancel(res.data.membership_status.status === "Active");
+    }
+    const getWeights = async() => {
+        const res = await getMemberWeight(id);
+        if(res.error) return toastError("Error while fetching data of user's weight");
+        setUserWeights(res.data);
+
     }
     const onCancel = async() => {
         if(!member) return;
@@ -36,6 +46,7 @@ export default function MemberByIdPage(){
     }
     useEffect(()=>{
         fetchMember();
+        getWeights();
     }, [id])
     if(!member) return (
         <>
@@ -75,8 +86,11 @@ export default function MemberByIdPage(){
                             </CircularProgressbarWithChildren>
                         </div>
                     </Box>
-                    <Box className="flex flex-col flex-1">
+                    <Box className="flex flex-col flex-1 space-y-4">
                         <div className="text-gray-700 font-medium text-lg">Weight</div>
+                        <div>
+                            <WeightGraph data={userWeights} />
+                        </div>
                     </Box>
                 </div>
                 <Box className="flex flex-col">

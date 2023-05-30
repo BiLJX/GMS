@@ -34,8 +34,9 @@ export const adminAuthMid = async(req: Request, res: Response, next: NextFunctio
         if(!admin) return jsonResponse.notAuthorized();
         res.locals.admin = admin;
         next();
-    } catch (error) { 
+    } catch (error: any) { 
         console.log(error);
-        jsonResponse.serverError();
+        if(error.message === "jwt expired")return jsonResponse.notAuthorized("Session Expired");
+        jsonResponse.notAuthorized("Not logged in")
     }
 }   

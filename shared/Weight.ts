@@ -5,3 +5,8 @@ export interface MemberWeightT {
     weight: number,
     createdAt: Date
 }
+
+export interface WeightStatsT {
+    value: number,
+    date: string
+}
