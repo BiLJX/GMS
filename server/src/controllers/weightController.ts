@@ -19,6 +19,11 @@ export const getMemberWeight: Controller = async(req, res) => {
                     createdAt: getLastDays(180)
                 }
             },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
         ])
         const data: WeightStatsT[] = weights.map(x=>({
             date: moment(x.createdAt).format("Do MMM"),
@@ -55,7 +60,7 @@ export const updateMemberWeight: Controller = async(req, res) => {
             return jsonResponse.success("Successfully updated member's weight");
         }
         const diff = moment(new Date()).diff(prevWeight.createdAt, "day")
-        if(Math.abs(diff) < 7) return jsonResponse.clientError("You can only update Weight in each week.")
+        if(Math.abs(diff) > 7) return jsonResponse.clientError("You can only update Weight in each week.")
         await member_weight.save();
         await Member.findOneAndUpdate({member_id: id}, {$set: {weight}})
         jsonResponse.success("Successfully updated member's weight");

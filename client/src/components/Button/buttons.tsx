@@ -1,7 +1,7 @@
 
 
 interface ButtonProps {
-    children: string;
+    children: any;
     onClick?: ()=>void;
     style?: React.CSSProperties;
     color?: string;

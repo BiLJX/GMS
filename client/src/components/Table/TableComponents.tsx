@@ -1,5 +1,6 @@
 import { SimpleButton } from "components/Button/buttons";
-
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import CreateIcon from '@mui/icons-material/Create';
 interface TableProps {
     children?: any,
     style?: React.CSSProperties,
@@ -70,7 +71,7 @@ export function TEditButton({style, onClick}:ButtonProps){
             fontSize: ".9rem",
             padding: "0 .8rem",
             ...style
-        }}>EDIT</SimpleButton>
+        }}><CreateIcon /></SimpleButton>
     )
 }
 
@@ -90,9 +91,11 @@ export function TDeleteButton({style, onClick}:ButtonProps){
         <SimpleButton onClick={onClick} style={{
             height: "25px",
             fontSize: ".9rem",
-            padding: "0 1rem",
+            padding: "0 .5rem",
             ...style
-        }}>Delete</SimpleButton>
+        }}>
+            <DeleteOutlineOutlinedIcon style = {{fontSize: "1.5rem"}} />
+        </SimpleButton>
     )
 }
 

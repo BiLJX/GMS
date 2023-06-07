@@ -19,7 +19,7 @@ export default function UpdateWeightModal({onClose}: ModalProps){
         const res = await updateWeight(id, parseInt(weight));
         setLoading(false)
         if(res.error) return toastError(res.message);
-        navigate(-1)
+        onClose()
     }
     return(
         <ReactModal shouldCloseOnEsc shouldFocusAfterRender = {false} shouldCloseOnOverlayClick onRequestClose={onClose} className="w-[500px] p-6 bg-white-100 rounded-lg flex flex-col space-y-4" overlayClassName="modal-overlay" isOpen>
