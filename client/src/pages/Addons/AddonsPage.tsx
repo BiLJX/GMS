@@ -7,10 +7,12 @@ import { useNavigate } from "react-router-dom";
 import Table, { TDeleteButton, TEditButton, Td, Th, Thead, Tr } from "components/Table/TableComponents";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { deleteAddon, getAddonList } from "api/addon";
 import { toastError } from "components/Toast/toast";
 import { addAddonList, removeAddon } from "redux/addonReducer";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { AddonT } from "@shared/Addon";
 const theadData = ["Addon Name", "Price", "ID", "Actions"];
 export default function AddonsPage(){
     const navigate = useNavigate();
@@ -27,6 +29,17 @@ export default function AddonsPage(){
         if(res.error) return toastError(res.message);
         dispatch(removeAddon(id));
     }
+    const columns = useMemo<GridColDef<AddonT>[]>(()=>[
+        { field: 'addon_id', headerName: 'ID', width: 50, align: "center", headerAlign: "center", sortable: false, disableColumnMenu: true ,renderCell: (params)=><span>{params.api.getRowIndexRelativeToVisibleRows(params.row.addon_id)+1}</span> },
+        { field: "addon_name", headerName: "Addon Name", renderCell: (params)=><span className="text-secondary-blue font-semibold">{params.row.addon_name}</span>,flex: 1  },
+        { field: "price", headerName: "Price", renderCell: params => "Rs "+params.row.price, flex: 1 },
+        {field: 'actions', disableColumnMenu: true,headerName: "Actions", sortable: false, flex: 1,renderCell: ({row})=>(
+            <div className="flex space-x-2">
+                <TEditButton onClick={()=>navigate("edit/"+row.addon_id)} />
+                <TDeleteButton onClick={()=>onDelete(row.addon_id)} />
+            </div>
+        )}
+    ], [])
     useEffect(()=>{
         getAddons()
     }, [])
@@ -40,7 +53,24 @@ export default function AddonsPage(){
                         <TableSearchBar style = {{flex: "1"}} onSearch={getAddons} />
                         <SimpleButton onClick={()=>navigate("add")} style={{fontSize: ".9rem", width: "125px", padding: "0", height: "33px"}}>Add</SimpleButton>
                     </div>
-                    <Table>
+                    <DataGrid 
+                    columns = {columns}
+                    rows={addons}
+                    getRowId={(row)=>row.addon_id}
+                    pageSizeOptions={[10, 15, 25]}
+                    rowHeight={63}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {pageSize: 10, page: 0},
+                        },
+                    }}
+                    sx={{
+                        "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
+                           outline: "none !important",
+                        },
+                    }}
+                    />
+                    {/* <Table>
                         <Thead>
                             <Th style={{width: "70px"}}></Th>
                             {theadData.map((x, i)=><Th key={i} style={{color: "#fff"}}>{x}</Th>)}
@@ -60,7 +90,7 @@ export default function AddonsPage(){
                             ))}
                             
                         </tbody>
-                    </Table>
+                    </Table> */}
                 </div>
             </Main>
         </>

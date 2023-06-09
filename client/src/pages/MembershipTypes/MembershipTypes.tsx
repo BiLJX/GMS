@@ -9,8 +9,10 @@ import { toastError, toastSuccess } from "components/Toast/toast";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
 import { addMembershipTypeList, removeMembershipType } from "redux/membershipTypeReducer";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Table, { TDeleteButton, TEditButton, Td, Th, Thead, Tr } from "components/Table/TableComponents";
+import { DataGrid, GridColDef, gridClasses } from "@mui/x-data-grid";
+import { MembershipTypeT } from "@shared/MembershipTypes";
 
 const theadData = ["Membership Name", "Period", "Description", "Fee", "ID", "Actions"];
 
@@ -30,6 +32,18 @@ export default function MembershipTypes(){
         if(res.error) return toastError(res.message);
         toastSuccess(res.message)
     }
+    const columns = useMemo<GridColDef<MembershipTypeT>[]>(()=>[
+        { field: 'member_id', headerName: 'ID', width: 50, align: "center", headerAlign: "center", sortable: false, disableColumnMenu: true ,renderCell: (params)=>params.api.getRowIndexRelativeToVisibleRows(params.row.membership_type_id)+1 },
+        { field: "membership_name", headerName: "Membership Name", renderCell: (params)=><span className="text-secondary-blue font-semibold">{params.row.membership_name}</span>,flex: 1  },
+        { field: "description", headerName: "Description", width: 300, sortable: false, disableColumnMenu: true },
+        { field: "price", headerName: "Fee", renderCell: params => "Rs "+params.row.price, width: 120 },
+        {field: 'actions', disableColumnMenu: true,headerName: "Actions", sortable: false, flex: 1,renderCell: ({row})=>(
+            <div className="flex space-x-2">
+                <TEditButton onClick={()=>navigate("edit/"+row.membership_type_id)} />
+                <TDeleteButton onClick={()=>onDelete(row.membership_type_id)} />
+            </div>
+        )}
+    ], [])
     useEffect(()=>{
         getMembershipTypes()
     }, [])
@@ -43,30 +57,30 @@ export default function MembershipTypes(){
                         <TableSearchBar onSearch={getMembershipTypes} style = {{flex: "1"}} />
                         <SimpleButton onClick={()=>navigate("create")} style={{fontSize: ".9rem", width: "125px", padding: "0", height: "33px"}}>Create</SimpleButton>
                     </div>
-                    <Table>
-                        <Thead>
-                                <Th style={{width: "70px"}}></Th>
-                                {theadData.map((x, i)=><Th key={i} style={{color: "#fff"}}>{x}</Th>)}
-                        </Thead>
-                        <tbody>
-                            {
-                                membership_types.map((x, i)=>(
-                                    <Tr index={i+1}>
-                                        <Td className="text-secondary-blue font-bold text-lg text-center">{i+1}</Td>
-                                        <Td className="text-secondary-blue font-bold">{x.membership_name}</Td>
-                                        <Td className="text-gray-500">{x.period} days</Td>
-                                        <Td className="text-gray-500">{x.description}</Td>
-                                        <Td className="text-gray-500">Rs {x.price}</Td>
-                                        <Td className="text-gray-500">{x.membership_type_id}</Td>
-                                        <Td className="flex space-x-2">
-                                            <TEditButton onClick={()=>navigate("edit/"+x.membership_type_id)} />
-                                            <TDeleteButton onClick={()=>onDelete(x.membership_type_id)} />
-                                        </Td>
-                                    </Tr>
-                                ))
-                            }
-                        </tbody>
-                    </Table>
+                    <DataGrid 
+                    columns = {columns}
+                    rows={membership_types}
+                    getRowId={(row)=>row.membership_type_id}
+                    pageSizeOptions={[10, 15, 25]}
+                    rowHeight={63}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {pageSize: 10, page: 0},
+                        },
+                    }}
+                    sx={{
+                        "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
+                           outline: "none !important",
+                        },
+                        // [`& .${gridClasses.columnHeader}`]: {
+                        //     backgroundColor: "#00a3e4",
+                        //     color: "#fff",
+                        // },
+                        // [`& .${gridClasses.row}:nth-child(odd)`]: {
+                        //     backgroundColor: "#F5F8FF",
+                        // },
+                    }}
+                    />
                 </div>
 
             </Main>

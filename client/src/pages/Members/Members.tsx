@@ -28,7 +28,7 @@ export default function Members(){
         dispatch(addMemberList(res.data));
     }
     const columns = useMemo<GridColDef<MemberT>[]>(()=>([
-        { field: 'member_id', headerName: 'ID', width: 50,renderCell: (params)=>params.api.getRowIndexRelativeToVisibleRows(params.row.member_id)+1 },
+        { field: 'member_id', headerName: 'ID', width: 50,  align: "center", headerAlign: "center", sortable: false, disableColumnMenu: true ,renderCell: (params)=>params.api.getRowIndexRelativeToVisibleRows(params.row.member_id)+1 },
         { field: 'full_name', headerName: "Name", renderCell: (params)=><NavLink className="text-secondary-blue font-semibold" to ={params.row.member_id}>{params.row.full_name}</NavLink>,flex: 1  },
         { field: 'renew_date', headerName: "Renew Date", renderCell: (params)=>moment(params.row.membership_status.renew_date).format("MMM Do, yyyy"), valueGetter: (params)=>params.row.membership_status.renew_date, flex: 1  },
         { field: 'expire_date', headerName: "Expire Date", renderCell: (params)=>moment(params.row.membership_status.expire_date).format("MMM Do, yyyy"), valueGetter: (params)=>params.row.membership_status.expire_date, flex: 1  },
@@ -60,6 +60,7 @@ export default function Members(){
                     getRowId={(row)=>row.member_id}
                     pageSizeOptions={[10, 15, 25]}
                     rowHeight={63}
+                    
                     initialState={{
                         pagination: {
                             paginationModel: {pageSize: pageSize, page: 0},
@@ -69,10 +70,9 @@ export default function Members(){
                         "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
                            outline: "none !important",
                         },
-                        [`& .${gridClasses.row}:nth-child(odd)`]: {
-                            backgroundColor: "#F5F8FF",
-                           
-                        },
+                        // [`& .${gridClasses.row}:nth-child(odd)`]: {
+                        //     backgroundColor: "#F5F8FF",
+                        // },
                     }}
                     
                     />
