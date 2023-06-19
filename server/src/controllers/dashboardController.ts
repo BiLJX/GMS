@@ -176,6 +176,22 @@ export const getDashboardStats: Controller = async(req, res) => {
             }
         ])
 
+        const avg_monthly_sales_count = (await Sales.aggregate([
+            {
+                $match: {
+                    gym_id,
+                    createdAt: getLastDays(30)
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    count: {$avg: "$total"}
+                }
+            }
+
+        ]))[0]?.count || 0
+
         const daily_sales = daily_sales_data.map(x=>{
             const month = moment(x._id.month + "", "M").format("MMM");
             const date = moment(x._id.day + "", "D").format("Do");
@@ -266,6 +282,8 @@ export const getDashboardStats: Controller = async(req, res) => {
 
         const member_increase = parseFloat((((total_members_monthly_count - total_members_prev_month) / total_members_prev_month)*100).toFixed(1))
         const sales_increase = parseFloat((((total_monthly_sales_count - total_sales_prev_month) / total_sales_prev_month)*100).toFixed(1))
+        const avg_sales_increase = parseFloat((((total_sales_today_count - avg_monthly_sales_count) / avg_monthly_sales_count)*100).toFixed(1))
+        
         const dashboardStats: DashboardStatsT = {
             total_members: {
                 value: total_members_count,
@@ -281,7 +299,7 @@ export const getDashboardStats: Controller = async(req, res) => {
             },
             total_sales_today: {
                 value: total_sales_today_count,
-                increase: sales_increase
+                increase: avg_sales_increase
             },
             membership_category: membershipCategory_data.map(x=>({
                 membership_name: x._id,
