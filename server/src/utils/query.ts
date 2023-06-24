@@ -20,6 +20,16 @@ export const getCurrentMonth = () => {
     }
 }
 
+export const getCurrentYear = () => {
+    const now = moment();
+    const start = now.startOf("year").toDate();
+    const end = now.endOf("year").toDate();
+    return {
+        $gte: start,
+        $lt: end
+    }
+}
+
 export const getLastDays = (days: number) => {
    return {
     $gte: moment().subtract(days, "days").toDate(),
