@@ -261,9 +261,22 @@ export const getRevenueMetrics: Controller = async(req, res) => {
                     "revenue_per_year": {$round: ["$revenue_per_year.value", 2]},
                 }
             },
-
+            //null checking
+            {
+                $addFields: {
+                    "total_revenue": { $ifNull: [ "$total_revenue", 0 ] },
+                    "total_revenue_today": { $ifNull: [ "$total_revenue_today", 0 ] },
+                    "total_revenue_current_month": { $ifNull: [ "$total_revenue_current_month", 0 ] },
+                    "total_revenue_current_year": { $ifNull: [ "$total_revenue_current_year", 0 ] },
+                    "average_revenue": { $ifNull: [ "$average_revenue", 0 ] },
+                    "revenue_per_day": { $ifNull: [ "$revenue_per_day", 0 ] },
+                    "revenue_per_month": { $ifNull: [ "$revenue_per_month", 0 ] },
+                    "revenue_per_year": { $ifNull: [ "$revenue_per_year", 0 ] },
+                }
+            },
         ])
-        jsonResponse.success(data)
+        if(!data.length) return jsonResponse.clientError("Could not proccess your metrics");
+        jsonResponse.success(data[0])
     } catch (error) {
         console.log(error);
         jsonResponse.serverError();
