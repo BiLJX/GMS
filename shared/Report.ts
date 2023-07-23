@@ -15,3 +15,9 @@ export interface RevenueReportMetrics {
     revenue_per_month: number,
     revenue_per_year: number
 }
+
+export interface RevenueGrowthChartI {
+    chart_data: ReportStatsT[],
+    total_revenue: number,
+    average_revenue: number
+}

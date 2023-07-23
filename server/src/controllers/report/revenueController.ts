@@ -1,7 +1,13 @@
+import { RevenueGrowthChartI } from "@shared/Report";
 import { Gym } from "models/Gym";
+import { Sales } from "models/Sales";
+import moment from "moment";
 import { Controller } from "types/controller";
 import JsonResponse from "utils/Response";
 import { getCurrentMonth, getCurrentYear, getToday } from "utils/query";
+
+
+
 
 export const getRevenueMetrics: Controller = async(req, res) => {
     const jsonResponse = new JsonResponse(res);
@@ -281,5 +287,89 @@ export const getRevenueMetrics: Controller = async(req, res) => {
         console.log(error);
         jsonResponse.serverError();
     }
+}
+
+export const getRevenueGrowthChart: Controller = async(req, res) => {
+    const jsonResponse = new JsonResponse(res);
+    try {
+        const { gym_id } = res.locals.admin;
+        const query: {from: null|moment.Moment, to: null|moment.Moment} = req.query as any;
+        if(!query) return jsonResponse.clientError("Invalid date query");
+        const { from, to } = query;
+        if(!from && !to) return jsonResponse.clientError("Enter date");
+        const revenues = await Sales.aggregate([
+            {
+                $match: {
+                    gym_id,
+                    createdAt: {
+                        $gte: moment(from).toDate(),
+                        $lte: moment(to).toDate()
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        month: {$month: "$createdAt"},
+                        day:{$dayOfMonth: "$createdAt"},
+                    },
+                    count: {$sum: "$total"}
+                }
+            },
+            {
+                $sort: {
+                    "_id.month": 1,
+                    "_id.day": 1,
+                }
+            }
+        ])
+        const metric = await Sales.aggregate<{_id: null, sum: number, avg: number}>([
+            {
+                $match: {
+                    gym_id,
+                    createdAt: {
+                        $gte: moment(from).toDate(),
+                        $lte: moment(to).toDate()
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    sum: {$sum: "$total"},
+                    avg: {$avg: "$total"}
+                }
+            }
+        ])
+        const data: RevenueGrowthChartI = {
+            total_revenue: parseFloat(Number(metric[0]?.sum || 0).toFixed(2)),
+            average_revenue: parseFloat(Number(metric[0]?.avg || 0).toFixed(2)),
+            chart_data: formatData(revenues)
+        }
+        jsonResponse.success(data)
+    } catch (error) {
+        console.log(error);
+        jsonResponse.serverError();
+    }
+}
+
+interface AggregatedData {
+    _id: {
+        day: number,
+        month: number,
+    },
+    count: number
+}
+
+function formatData (data: AggregatedData[]) {
+    return data.map(x=>{
+        const month = moment(x._id.month + "", "M").format("MMM");
+        const date = moment(x._id.day + "", "D").format("Do");
+        const full_date = month + " " + date;
+        return {
+            label: full_date,
+            value: x.count
+        }
+    })
 }
 

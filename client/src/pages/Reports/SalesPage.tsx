@@ -2,8 +2,8 @@ import Header from "components/Header/Header";
 import PointOfSaleOutlinedIcon from '@mui/icons-material/PointOfSaleOutlined';
 import Main from "components/Container/Main";
 import { useState, useEffect } from "react"
-import { ReportByDateT, ReportStatsT, RevenueReportMetrics } from "@shared/Report";
-import { getSalesMetrics, getSalesReport } from "api/report";
+import { ReportByDateT, ReportStatsT, RevenueGrowthChartI, RevenueReportMetrics } from "@shared/Report";
+import { getSalesGrowthChart, getSalesMetrics, getSalesReport } from "api/report";
 import { toastError } from "components/Toast/toast";
 import { LineChartReport } from "./LineChartReport";
 import { Select, MenuItem } from "@mui/material";
@@ -12,17 +12,23 @@ import moment from "moment";
 
 export default function SalesPage(){
     const [dateRange, setDateRange] = useState<{from: null|moment.Moment, to: null|moment.Moment}>({from: moment().subtract(30, "days"), to: moment()})
-    const [data, setData] = useState<RevenueReportMetrics>()
+    const [data, setData] = useState<RevenueReportMetrics>();
+    const [chartData, setChartData] = useState<RevenueGrowthChartI>();
     const fetchMetrics = async() => {
         const res = await getSalesMetrics();
         if(res.error) return toastError(res.message);
         setData(res.data);
     }
+    const fetchGrowthChart = async() => {
+        const res = await getSalesGrowthChart(dateRange);
+        if(res.error) return toastError(res.message);
+        setChartData(res.data);
+    }
     useEffect(()=>{
         fetchMetrics();
     }, [])
     useEffect(()=>{
-        
+        fetchGrowthChart()
     }, [dateRange])
     if(!data) return <></>
     return(
@@ -67,6 +73,21 @@ export default function SalesPage(){
                             value={dateRange.to}
                             onChange={val=>setDateRange({...dateRange, to: val})}
                             />
+                        </div>
+                        <div className="flex-1 mt-4">
+                            {chartData && <LineChartReport
+                            data = {chartData.chart_data}
+                            />}
+                        </div>
+                        <div className="mt-4 text-base space-y-2 text-gray-500 text-[0.9rem]">
+                            <div className="flex">
+                                <div>Total Revenue</div>
+                                <div className="ml-auto">Rs {chartData?.total_revenue || 0}</div>
+                            </div>
+                            <div className="flex">
+                                <div>Average Revenue</div>
+                                <div className="ml-auto">Rs {chartData?.average_revenue || 0}</div>
+                            </div>
                         </div>
                     </div> 
                 </div>
