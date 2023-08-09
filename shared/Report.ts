@@ -24,9 +24,9 @@ export interface RevenueGrowthChartI {
 
 export interface MemberReportMetricsI {
     total_members: number,
-    total_members_today: number,
-    total_members_current_month: number,
-    total_members_current_year: number,
+    total_members_joined_today: number,
+    total_members_joined_current_month: number,
+    total_members_joined_current_year: number,
     members_per_day: number,
     members_per_month: number,
     members_per_year: number

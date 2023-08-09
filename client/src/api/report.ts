@@ -1,4 +1,4 @@
-import { ReportByDateT, ReportStatsT, RevenueGrowthChartI } from "@shared/Report";
+import { MemberGrowthChartI, MemberReportMetricsI, ReportByDateT, ReportStatsT, RevenueGrowthChartI } from "@shared/Report";
 import axios from "./axios";
 import { RevenueReportMetrics } from "../../../shared/Report";
 import moment from "moment";
@@ -23,7 +23,18 @@ export const getSalesMetrics = async() => {
     return res.data as ApiResponse<RevenueReportMetrics>;
 }
 
+
 export const getSalesGrowthChart = async(body: {from: moment.MomentInput | null, to: moment.MomentInput | null}) => {
     const res = await axios.get("/api/reports/sales/chart", {params: body});
     return res.data as ApiResponse<RevenueGrowthChartI>;
+}
+
+export const getMembersMetrics = async() => {
+    const res = await axios.get("/api/reports/members/metrics");
+    return res.data as ApiResponse<MemberReportMetricsI>;
+}
+
+export const getMembersGrowthChart = async(body: {from: moment.MomentInput | null, to: moment.MomentInput | null}) => {
+    const res = await axios.get("/api/reports/members/chart", {params: body});
+    return res.data as ApiResponse<MemberGrowthChartI>;
 }
