@@ -21,3 +21,18 @@ export interface RevenueGrowthChartI {
     total_revenue: number,
     average_revenue: number
 }
+
+export interface MemberReportMetricsI {
+    total_members: number,
+    total_members_today: number,
+    total_members_current_month: number,
+    total_members_current_year: number,
+    members_per_day: number,
+    members_per_month: number,
+    members_per_year: number
+}
+
+export interface MemberGrowthChartI {
+    chart_data: ReportStatsT[],
+    total_members: number,
+}

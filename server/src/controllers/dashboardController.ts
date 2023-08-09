@@ -280,9 +280,9 @@ export const getDashboardStats: Controller = async(req, res) => {
         ])
         
 
-        const member_increase = parseFloat((((total_members_monthly_count - total_members_prev_month) / total_members_prev_month)*100).toFixed(1))
-        const sales_increase = parseFloat((((total_monthly_sales_count - total_sales_prev_month) / total_sales_prev_month)*100).toFixed(1))
-        const avg_sales_increase = parseFloat((((total_sales_today_count - avg_monthly_sales_count) / avg_monthly_sales_count)*100).toFixed(1))
+        const member_increase = parseFloat((((total_members_monthly_count - total_members_prev_month) / total_members_prev_month)*100).toFixed(1)) || 0
+        const sales_increase = parseFloat((((total_monthly_sales_count - total_sales_prev_month) / total_sales_prev_month)*100).toFixed(1)) || 0
+        const avg_sales_increase = parseFloat((((total_sales_today_count - avg_monthly_sales_count) / avg_monthly_sales_count)*100).toFixed(1)) || 0
         
         const dashboardStats: DashboardStatsT = {
             total_members: {
